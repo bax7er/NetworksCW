@@ -19,8 +19,8 @@ public class SequencialNumberTest {
         for(int i = 0;i<1000;i++){
             data.add(String.valueOf(i));
         }
-        ReceiverThread receiver = new ReceiverThread(Socket4);
-        SenderThread sender = new SenderThread(Socket4,"127.0.0.1",data);
+        ReceiverThread receiver = new ReceiverThread(Socket2);
+        SenderThread sender = new SenderThread(Socket2,"127.0.0.1",data);
         
         receiver.start();
         sender.start();

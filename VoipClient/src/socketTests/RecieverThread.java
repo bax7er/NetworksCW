@@ -6,6 +6,7 @@
 package socketTests;
 
 import CMPC3M06.AudioPlayer;
+import fileIO.OutFile;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -63,7 +64,8 @@ class ReceiverThread implements Runnable{
         //Main loop.
         
         boolean running = true;
-        
+        OutFile of = new OutFile("test.csv");
+        int i = 0;
         while (running){
             try{
                 byte[] buffer = new byte[80];
@@ -72,10 +74,12 @@ class ReceiverThread implements Runnable{
                 //Get a string from the byte buffer
                 String str = new String(buffer);
                 //Display it
+                of.writeLine(String.valueOf(i)+','+str);
                 System.out.println(str);
+                i++;
                 }   
             catch (SocketTimeoutException e){
-                
+                running = false;
             }
             catch (IOException ex) {
                 Logger.getLogger(ReceiverThread.class.getName()).log(Level.SEVERE, null, ex);
@@ -83,6 +87,7 @@ class ReceiverThread implements Runnable{
             
         }
         //Close the socket
+        of.closeFile();
         receiving_socket.close();
         //***************************************************
     }
