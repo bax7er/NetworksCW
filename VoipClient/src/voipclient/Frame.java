@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package lab3;
+package voipclient;
 
 import java.nio.ByteBuffer;
 
@@ -11,7 +11,7 @@ import java.nio.ByteBuffer;
  *
  * @author Baxter
  */
-public class Frame {
+public class Frame implements Comparable<Frame>{
     public short frameNO;
     public byte[] framedata;
     public Frame(short frameNO, byte[] framedata){
@@ -21,6 +21,7 @@ public class Frame {
     public Frame(byte[] packetdata){
         ByteBuffer buffer = ByteBuffer.wrap(packetdata, 0, 2);
         frameNO = buffer.getShort();
+        framedata = new byte[packetdata.length-2];
         System.arraycopy( packetdata, 2, framedata, 0, packetdata.length-2 );
     }
     
@@ -32,5 +33,10 @@ public class Frame {
         packetdata[1] = (byte) ((frameNO >> 8) & 0xFF);
         System.arraycopy( framedata, 0, packetdata, 2, framedata.length );
         return packetdata;
+    }
+
+    @Override
+    public int compareTo(Frame o) {
+        return this.frameNO - o.frameNO;
     }
 }

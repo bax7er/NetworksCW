@@ -64,7 +64,7 @@ class ReceiverThread implements Runnable{
         //Main loop.
         
         boolean running = true;
-        OutFile of = new OutFile("test.csv");
+        OutFile of = new OutFile("socket4.csv");
         int i = 0;
         while (running){
             try{

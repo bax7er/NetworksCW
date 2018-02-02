@@ -22,7 +22,7 @@ class SenderThread implements Runnable{
     
     static DatagramSocket sending_socket;
     public static final int PORT = 55555; //Port to send to
-    public final String HOSTNAME = "CMPLEWIN-16";
+    public final String HOSTNAME = "127.0.0.1";
     public InetAddress clientIP = null;
     public String IP = null;
    
@@ -45,7 +45,7 @@ class SenderThread implements Runnable{
         
         // Open sending socket
          try{
-		sending_socket = new DatagramSocket4();
+		sending_socket = new DatagramSocket2();
 	} catch (SocketException e){
                 System.err.println("ERROR: Could not open UDP socket to send from.");
 		e.printStackTrace();
@@ -56,18 +56,42 @@ class SenderThread implements Runnable{
     public void run (){
         setUpConnection();
         AudioRecorder recorder = null;
-        setUpAudioRecorder(recorder);
+                 try {
+            recorder = new AudioRecorder();
+        } catch (LineUnavailableException ex) {
+            System.err.println("ERROR: Could not open AudioRecorder.");
+            System.out.println("No recording device available, you will be able to recieve but not send voice");
+        }
        
         boolean running = true;
         
         while (running){
             try{
-                byte[] block = recorder.getBlock();           
-                //Make a DatagramPacket from it, with client address and port number
-                DatagramPacket packet = new DatagramPacket(block, block.length, clientIP, PORT);
+                Compensator blocky = new BlockInterleaver();
+                for(int i = 0;i<4;i++){
+                byte[] block = recorder.getBlock();
+                Frame f = new Frame((short)i,block);
+                blocky.push(f);
+                }
+                blocky.process();
                 
+                 for(int i = 0;i<4;i++){
+                  Frame f = blocky.pop();
+                  DatagramPacket packet = new DatagramPacket(f.getPacketdata(), f.getPacketdata().length, clientIP, PORT);
+                  sending_socket.send(packet);
+                 }
+                //Make a DatagramPacket from it, with client address and port number
+                
+                // Scumbag method for socket 4
+               /* for(int i = 0;i<block.length;i+=2){
+                    byte[] subblock={block[i],block[i+1]};
+                     DatagramPacket packet = new DatagramPacket(subblock, subblock.length, clientIP, PORT);
+                      sending_socket.send(packet);
+                }*/
+                
+                //DatagramPacket packet = new DatagramPacket(block, block.length, clientIP, PORT);
                 //Send it
-                sending_socket.send(packet);
+                //sending_socket.send(packet);
             } catch (IOException e){
                 System.err.println("ERROR:IO error occured - Sending thread");
                 e.printStackTrace();
@@ -80,7 +104,7 @@ class SenderThread implements Runnable{
     }
 
     private void setUpAudioRecorder(AudioRecorder recorder) {
-                try {
+         try {
             recorder = new AudioRecorder();
         } catch (LineUnavailableException ex) {
             System.err.println("ERROR: Could not open AudioRecorder.");

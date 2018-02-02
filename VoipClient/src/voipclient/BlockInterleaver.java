@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package lab3;
+package voipclient;
 
 import static java.lang.Math.sqrt;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
  *
  * @author Baxter
  */
-public class BlockInterleaver {
+public class BlockInterleaver implements Compensator {
     private int[] depth;
     private static final int[] DEPTH2 = {1,3,0,2};
     private static final int[] DEPTH3 = {2,5,8,1,4,7,0,3,6};
@@ -23,7 +23,7 @@ public class BlockInterleaver {
         framedata.add(f);
     };
     
-    public void interleave(){
+    public void process(){
         counter = 0;
         depth = new int[framedata.size()];
         switch (framedata.size()) {
