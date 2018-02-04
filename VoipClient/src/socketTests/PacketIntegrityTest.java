@@ -18,10 +18,12 @@ public class PacketIntegrityTest {
         ArrayList<String> data= new ArrayList();
         ArrayList<byte[]> bytes= new ArrayList();;
         byte[] shortPacket ={0};
+        byte[] shortPacket2 ={0,0};
         byte[] midPacket ={0,0,0,0};
         byte[] midPacket2 ={0,0,0,0,0,0,0,0};
-        byte[] longPacket ={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+        byte[] longPacket ={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
         bytes.add(shortPacket);
+        bytes.add(shortPacket2);
         bytes.add(midPacket);
         bytes.add(midPacket2);
         bytes.add(longPacket);
@@ -41,6 +43,7 @@ public class PacketIntegrityTest {
             System.err.println("THREAD ERROR");
             }
             int corruptedPackets=0;
+            System.out.println("Packet size(bytes) " + b.length +":");
             for(String str:receivedData){
                 byte[] recFul = str.getBytes();
                 byte[] rec = Arrays.copyOfRange(recFul, 0, b.length);
@@ -49,7 +52,7 @@ public class PacketIntegrityTest {
                     System.out.println("Expected: "+Arrays.toString(b)+ " Got: "+Arrays.toString(rec));
                 }
             }
-            System.out.println("Packet size(bytes)" + b.length);
+            
             System.out.println(corruptedPackets+" bad packets. " +(TESTSIZE-corruptedPackets)+" healthy packets.");
         }
        

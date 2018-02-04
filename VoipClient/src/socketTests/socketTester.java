@@ -20,17 +20,21 @@ public class socketTester {
         PacketLossTest.testSocket(Socket1);
         PacketOrderTest.testSocket(Socket1);
         PacketIntegrityTest.testSocket(Socket1);
+        LatencyTest.testSocket(Socket1);
         System.out.println("*** TESTING SOCKET 2 ***");
         PacketLossTest.testSocket(Socket2);
         PacketOrderTest.testSocket(Socket2);
         PacketIntegrityTest.testSocket(Socket2);
+        LatencyTest.testSocket(Socket2);
         System.out.println("*** TESTING SOCKET 3 ***");
         PacketLossTest.testSocket(Socket3);
         PacketOrderTest.testSocket(Socket3);
         PacketIntegrityTest.testSocket(Socket3);
+        LatencyTest.testSocket(Socket3);
         System.out.println("*** TESTING SOCKET 4 ***");
         PacketLossTest.testSocket(Socket4);
         PacketOrderTest.testSocket(Socket4);
         PacketIntegrityTest.testSocket(Socket4);
+        LatencyTest.testSocket(Socket4);
     }
 }

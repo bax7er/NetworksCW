@@ -30,10 +30,17 @@ class ReceiverThread implements Runnable{
     private socketType socketType;
     public ArrayList<String> data;
     public Thread thread;
+    private LongWrapper timestamp;
     
     public ReceiverThread(socketType s,ArrayList<String> recievedData){
         socketType = s;
         data = recievedData;
+        timestamp = null;
+    }
+    public ReceiverThread(socketType s,ArrayList<String> recievedData,LongWrapper l){
+        socketType = s;
+        data = recievedData;
+        timestamp = l;
     }
     public void start(){
         this.thread = new Thread(this);
@@ -76,6 +83,9 @@ class ReceiverThread implements Runnable{
                 DatagramPacket packet = new DatagramPacket(buffer, 0, 80);
                 receiving_socket.receive(packet);
                 //Get a string from the byte buffer
+                if(timestamp!=null){
+                    timestamp.data = System.nanoTime();
+                }
                 String str = new String(buffer);
                 //Display it
                 //of.writeLine(String.valueOf(i)+','+str);
