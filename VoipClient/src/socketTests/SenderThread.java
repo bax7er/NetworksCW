@@ -30,10 +30,11 @@ class SenderThread implements Runnable{
     public String IP = null;
     private socketType socketType;
     private ArrayList<String> data;
+    public Thread thread;
    
     
     public void start(){
-        Thread thread = new Thread(this);
+        this.thread = new Thread(this);
 	thread.start();
     }
     

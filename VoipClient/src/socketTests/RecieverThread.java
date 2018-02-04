@@ -12,6 +12,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sound.sampled.LineUnavailableException;
@@ -27,12 +28,15 @@ class ReceiverThread implements Runnable{
     private static final int PORT = 55555;
     public enum socketType{Socket1,Socket2,Socket3,Socket4};
     private socketType socketType;
+    public ArrayList<String> data;
+    public Thread thread;
     
-    public ReceiverThread(socketType s){
+    public ReceiverThread(socketType s,ArrayList<String> recievedData){
         socketType = s;
+        data = recievedData;
     }
     public void start(){
-        Thread thread = new Thread(this);
+        this.thread = new Thread(this);
 	thread.start();
     }
     
@@ -74,9 +78,10 @@ class ReceiverThread implements Runnable{
                 //Get a string from the byte buffer
                 String str = new String(buffer);
                 //Display it
-                of.writeLine(String.valueOf(i)+','+str);
-                System.out.println(str);
+                //of.writeLine(String.valueOf(i)+','+str);
+                //System.out.println(str);
                 i++;
+                data.add(str);
                 }   
             catch (SocketTimeoutException e){
                 running = false;
