@@ -84,8 +84,6 @@ class SenderThread implements Runnable{
                 
                  for(int i = 0;i<blockCount;i++){
                   Frame f = blocky.pop();
-                  System.out.println("Sending "+f.frameNO);
-                     System.out.println(f.toString());
                   DatagramPacket packet = new DatagramPacket(f.getPacketdata(), f.getPacketdata().length, clientIP, PORT);
                   sending_socket.send(packet);
                  }

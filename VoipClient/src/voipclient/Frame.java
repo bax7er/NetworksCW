@@ -29,6 +29,13 @@ public class Frame implements Comparable<Frame>{
             framedata[i] = 0;
     }
     
+    public Frame(Frame source){
+        frameNO = source.frameNO;
+        framedata = new byte[512];
+        for (int i = 0; i <512; i++)
+            framedata[i] = source.framedata[i];
+    }
+    
     public Frame(byte[] packetdata){
         ByteBuffer buffer = ByteBuffer.wrap(packetdata, 0, 2);
         frameNO = buffer.getShort();
@@ -51,6 +58,14 @@ public class Frame implements Comparable<Frame>{
         return this.frameNO - o.frameNO;
     }
 
+    public Frame getHalvedAmp(){
+        Frame halved = new Frame(this);
+        byte dif = 2;
+        for (int i = 0; i <512; i++)
+            halved.framedata[i] = (byte) (halved.framedata[i]/dif);
+        return halved;
+    }
+    
     @Override
     public String toString(){
         StringBuilder str = new StringBuilder();

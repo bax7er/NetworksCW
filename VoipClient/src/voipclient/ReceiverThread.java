@@ -61,8 +61,8 @@ class ReceiverThread implements Runnable{
         boolean running = true;
         int blockCount = 9;
         short count = 9;
-        Frame empty = new Frame();
         Frame[] frameBufferNext = new Frame[blockCount];
+        RepetitionCompensation Rep = new RepetitionCompensation();
         while (running){
             try{
                 Frame[] frameBuffer = frameBufferNext;
@@ -85,10 +85,14 @@ class ReceiverThread implements Runnable{
                 if (count > 32767)
                     count = 0;
                 
+                Rep.fix(frameBuffer);
+                
+                /*
                 for(int i = 0; i < frameBuffer.length; i ++){
                     if(frameBuffer[i] == null)
                         frameBuffer[i] = empty;
                 }
+                /**/
                 //byte[] buffer = new byte[512];
                 //DatagramPacket packet = new DatagramPacket(buffer, 0, 512);
                 // Scumbag method for socket4
@@ -99,17 +103,9 @@ class ReceiverThread implements Runnable{
                     buffer[i]=subbuffer[0];
                     buffer[i+1]=subbuffer[1];
                 }*/
-               //receiving_socket.receive(packet);
-                 for(int i =0;i<blockCount;i++){
-                     try{
-                         System.out.println("Playing "+frameBuffer[i].frameNO);
-                     }catch(NullPointerException e){
-                         System.out.println("error");
-                     }
-                     System.out.println("Playing "+frameBuffer[i].frameNO);
-                     System.out.println(frameBuffer[i].toString());
-                player.playBlock(frameBuffer[i].framedata);
-                 }
+                for(int i =0;i<blockCount;i++){
+                    player.playBlock(frameBuffer[i].framedata);
+                }
                 //player.playBlock(packet.getData());
             }catch (SocketTimeoutException e) {
                 System.out.println("Socket timeout");
