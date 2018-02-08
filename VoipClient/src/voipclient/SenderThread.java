@@ -65,18 +65,27 @@ class SenderThread implements Runnable{
        
         boolean running = true;
         
+        int blockCount = 9;
+        short count = 0;
         while (running){
             try{
                 Compensator blocky = new BlockInterleaver();
-                for(int i = 0;i<4;i++){
+                for(int i = 0;i<blockCount;i++){
                 byte[] block = recorder.getBlock();
-                Frame f = new Frame((short)i,block);
+                
+                if (count > 32767)
+                    count = 0;
+                
+                Frame f = new Frame(count,block);
+                count++;
                 blocky.push(f);
                 }
                 blocky.process();
                 
-                 for(int i = 0;i<4;i++){
+                 for(int i = 0;i<blockCount;i++){
                   Frame f = blocky.pop();
+                  System.out.println("Sending "+f.frameNO);
+                     System.out.println(f.toString());
                   DatagramPacket packet = new DatagramPacket(f.getPacketdata(), f.getPacketdata().length, clientIP, PORT);
                   sending_socket.send(packet);
                  }

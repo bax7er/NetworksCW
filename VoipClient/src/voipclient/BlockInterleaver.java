@@ -14,6 +14,7 @@ import java.util.ArrayList;
  */
 public class BlockInterleaver implements Compensator {
     private int[] depth;
+    //private static final int[] DEPTH2 = {0,1,2,3};
     private static final int[] DEPTH2 = {1,3,0,2};
     private static final int[] DEPTH3 = {2,5,8,1,4,7,0,3,6};
     private ArrayList<Frame> framedata;

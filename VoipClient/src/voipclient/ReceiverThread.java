@@ -59,17 +59,36 @@ class ReceiverThread implements Runnable{
         //Main loop.
         
         boolean running = true;
-        
+        int blockCount = 9;
+        short count = 9;
+        Frame empty = new Frame();
+        Frame[] frameBufferNext = new Frame[blockCount];
         while (running){
             try{
-                Frame[] frameBuffer = new Frame[4];
-                for(int i =0;i<4;i++){
-                byte[] buffer = new byte[514];
-                DatagramPacket packet = new DatagramPacket(buffer, 0, 514);
-                receiving_socket.receive(packet);
-                frameBuffer[i] = new Frame(buffer);
+                Frame[] frameBuffer = frameBufferNext;
+                frameBufferNext = new Frame[blockCount];
+
+                boolean done = false;
+                do{
+                    byte[] buffer = new byte[514];
+                    DatagramPacket packet = new DatagramPacket(buffer, 0, 514);
+                    receiving_socket.receive(packet);
+                    Frame temp = new Frame(buffer);
+                    if(temp.frameNO <count){
+                         frameBuffer[temp.frameNO%blockCount] = temp;
+                    }else{
+                        frameBufferNext[temp.frameNO%blockCount] = temp;
+                        done = true;
+                    }
+                }while (!done);
+                count+= blockCount;
+                if (count > 32767)
+                    count = 0;
+                
+                for(int i = 0; i < frameBuffer.length; i ++){
+                    if(frameBuffer[i] == null)
+                        frameBuffer[i] = empty;
                 }
-                Arrays.sort(frameBuffer);
                 //byte[] buffer = new byte[512];
                 //DatagramPacket packet = new DatagramPacket(buffer, 0, 512);
                 // Scumbag method for socket4
@@ -81,7 +100,14 @@ class ReceiverThread implements Runnable{
                     buffer[i+1]=subbuffer[1];
                 }*/
                //receiving_socket.receive(packet);
-                 for(int i =0;i<4;i++){
+                 for(int i =0;i<blockCount;i++){
+                     try{
+                         System.out.println("Playing "+frameBuffer[i].frameNO);
+                     }catch(NullPointerException e){
+                         System.out.println("error");
+                     }
+                     System.out.println("Playing "+frameBuffer[i].frameNO);
+                     System.out.println(frameBuffer[i].toString());
                 player.playBlock(frameBuffer[i].framedata);
                  }
                 //player.playBlock(packet.getData());

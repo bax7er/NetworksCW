@@ -5,6 +5,10 @@
  */
 package voipclient;
 
+import java.awt.Graphics;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
 import java.nio.ByteBuffer;
 
 /**
@@ -18,6 +22,13 @@ public class Frame implements Comparable<Frame>{
         this.frameNO = frameNO;
         this.framedata  = framedata;
     }
+    public Frame(){
+        frameNO = 0;
+        framedata = new byte[512];
+        for (int i = 0; i <512; i++)
+            framedata[i] = 0;
+    }
+    
     public Frame(byte[] packetdata){
         ByteBuffer buffer = ByteBuffer.wrap(packetdata, 0, 2);
         frameNO = buffer.getShort();
@@ -29,8 +40,8 @@ public class Frame implements Comparable<Frame>{
         byte[] packetdata = new byte[framedata.length+2];
         //  & 0xFF masks all but the lowest eight bits.
         //  >> 8 discards the lowest 8 bits by moving all bits 8 places to the right
-        packetdata[0] = (byte) (frameNO & 0xFF);
-        packetdata[1] = (byte) ((frameNO >> 8) & 0xFF);
+        packetdata[1] = (byte) (frameNO & 0xFF);
+        packetdata[0] = (byte) ((frameNO >> 8) & 0xFF);
         System.arraycopy( framedata, 0, packetdata, 2, framedata.length );
         return packetdata;
     }
@@ -38,5 +49,16 @@ public class Frame implements Comparable<Frame>{
     @Override
     public int compareTo(Frame o) {
         return this.frameNO - o.frameNO;
+    }
+
+    @Override
+    public String toString(){
+        StringBuilder str = new StringBuilder();
+        str.append(frameNO);
+        for (int i = 0; i < framedata.length; i++){
+            str.append(framedata[i]);
+        }
+        
+        return str.toString();
     }
 }
