@@ -14,10 +14,10 @@ import static socketTests.ReceiverThread.socketType.*;
 public class PacketLossTest {
     public static void testSocket(socketType s){
         socketType socket = s;
-        
+        boolean[] recievedIndicator = new boolean[1000];
         ArrayList<String> data= new ArrayList();
         for(int i = 0;i<1000;i++){
-            data.add("TestPacket");
+            data.add(String.valueOf(i));
         }
         ArrayList<String> recievedData= new ArrayList();
         ReceiverThread receiver = new ReceiverThread(socket,recievedData);
@@ -33,10 +33,34 @@ public class PacketLossTest {
         }
        int sentNO = data.size();
        int receivedNO = recievedData.size();
+       for(String str: recievedData){
+           int packetNO = Integer.parseInt(str.trim());
+           recievedIndicator[packetNO] = true;
+       }
        System.out.println("Sent "+ sentNO+" Packets. Recieved "+receivedNO + " Packets");
        int lost = sentNO-receivedNO;
        float percentage = (float)lost/(float)sentNO;
        percentage*=100;
-        System.out.println(lost+" Packets Lost. "+percentage+"% packet loss");
+       System.out.println(lost+" Packets Lost. "+percentage+"% packet loss");
+       int burstlength=0;
+       int burstCount = 0;
+       int longestBurst = 0;
+       float avgBurst;
+       for(boolean b : recievedIndicator){
+           if(b==false){
+               burstlength++;
+           }
+           else{
+               if (burstlength!=0){
+                   burstCount++;
+                   if(burstlength>longestBurst){
+                       longestBurst = burstlength;
+                   }
+                   burstlength = 0;
+               }
+           }
+       }
+        System.out.println("Longest Burst: " + longestBurst +" packets");
+        System.out.println("Average Burst: " + (lost/(float)burstCount));
     }
 }
