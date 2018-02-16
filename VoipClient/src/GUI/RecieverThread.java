@@ -35,6 +35,8 @@ class ReceiverThread implements Runnable{
     public Thread thread;
     private AudioPreset preset;
     private boolean running;
+    public int recCount;
+    public boolean timeout = false;
     
     public ReceiverThread(SocketType s,int port,AudioPreset a){
         socketType = s;
@@ -91,6 +93,8 @@ class ReceiverThread implements Runnable{
                     byte[] buffer = new byte[514];
                     DatagramPacket packet = new DatagramPacket(buffer, 0, 514);
                     receiving_socket.receive(packet);
+                    recCount++;
+                    timeout = false;
                     Frame temp = new Frame(buffer);
                     reorder.push(temp);
                     Frame[] playback = reorder.pop();
@@ -100,12 +104,14 @@ class ReceiverThread implements Runnable{
                     }
                 //player.playBlock(packet.getData());
             }catch (SocketTimeoutException e) {
-                System.out.println("Socket timeout");
+                timeout=true;
             } catch (IOException e){
                 System.err.println("ERROR:IO error occured - Reciever thread");
                 e.printStackTrace();
             }
         }
+        player.close();
+        player = null;
         //Close the socket
         receiving_socket.close();
         //***************************************************

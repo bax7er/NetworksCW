@@ -18,19 +18,11 @@ import javax.swing.table.JTableHeader;
  */
 public class VOIPGUI extends javax.swing.JFrame {
 
-    ArrayList<String> assignmentNames;
-    ArrayList<String> mileStoneNames;
+    public VOIPservice voip;
 
-    /**
-     * Creates new form StudyDashboardBetaGUI
-     */
     public VOIPGUI() {
         initComponents();
-        ArrayList<String> semesterNames = new ArrayList<>();
-
-        // semesterNames.add("<Create New Semester>");
-
-        //Fix Table Colours
+        
         
     }
 
@@ -56,7 +48,7 @@ public class VOIPGUI extends javax.swing.JFrame {
         bitrateselection = new javax.swing.JComboBox<>();
         portSelection = new javax.swing.JFormattedTextField();
         bottomPanel = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
         topPanel = new javax.swing.JPanel();
         welcomeLabelSemesterSelect = new javax.swing.JLabel();
 
@@ -167,17 +159,19 @@ public class VOIPGUI extends javax.swing.JFrame {
 
         bottomPanel.setBackground(new java.awt.Color(42, 128, 185));
 
-        jButton1.setBackground(new java.awt.Color(44, 151, 223));
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/startcall.png"))); // NOI18N
-        jButton1.setBorder(null);
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        jButton2.setBackground(new java.awt.Color(42, 128, 185));
+        jButton2.setForeground(new java.awt.Color(255, 255, 255));
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/startcall.png"))); // NOI18N
+        jButton2.setBorder(null);
+        jButton2.setMaximumSize(new java.awt.Dimension(999, 999));
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton1MouseClicked(evt);
+                jButton2MouseClicked(evt);
             }
         });
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                jButton2ActionPerformed(evt);
             }
         });
 
@@ -185,17 +179,17 @@ public class VOIPGUI extends javax.swing.JFrame {
         bottomPanel.setLayout(bottomPanelLayout);
         bottomPanelLayout.setHorizontalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(bottomPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1)
-                .addContainerGap(905, Short.MAX_VALUE))
+                .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
+                .addGap(860, 860, 860))
         );
         bottomPanelLayout.setVerticalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bottomPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1)
-                .addContainerGap(47, Short.MAX_VALUE))
+                .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         SemesterSelectCard.add(bottomPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 488, 980, -1));
@@ -243,11 +237,11 @@ public class VOIPGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_hostSelectionActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_jButton2MouseClicked
 
-    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         int bitrate = bitrateselection.getSelectedIndex();
         int socket = socketSelection.getSelectedIndex();
         try {
@@ -257,9 +251,10 @@ public class VOIPGUI extends javax.swing.JFrame {
         }
         int port = Integer.parseInt(portSelection.getValue().toString());
         String hostname = hostSelection.getText();
-        VOIPservice voip = new VOIPservice(hostname,port,socket,bitrate);
-        voip.startVOIP();
-    }//GEN-LAST:event_jButton1MouseClicked
+        voip = new VOIPservice(hostname,port,socket,bitrate);
+        new CallGUI(voip,this).setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -308,7 +303,7 @@ public class VOIPGUI extends javax.swing.JFrame {
     private javax.swing.JLabel fileInfoText3;
     private javax.swing.JLabel fileInfoText4;
     private javax.swing.JTextField hostSelection;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JFormattedTextField portSelection;
     private javax.swing.JComboBox<String> socketSelection;

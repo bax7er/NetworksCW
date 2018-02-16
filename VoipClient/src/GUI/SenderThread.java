@@ -37,7 +37,8 @@ class SenderThread implements Runnable{
     public Thread thread;
     private AudioPreset preset;
     private boolean running;
-    
+    public int sentCount;
+    public boolean hostFailed;
     public void start(){
         this.thread = new Thread(this);
 	thread.start();
@@ -60,8 +61,8 @@ class SenderThread implements Runnable{
                 IP = clientIP.getHostAddress();
 	} catch (UnknownHostException e) {
                 System.err.println("ERROR: Unknown Host: "+ HOSTNAME);
-		e.printStackTrace();
-                System.exit(0);
+                running = false;
+                hostFailed = true;
 	}
         
         // Open sending socket
@@ -86,6 +87,7 @@ class SenderThread implements Runnable{
     }
     @Override
     public void run (){
+        running = true;
          setUpConnection();
         AudioRecorder recorder = null;
                  try {
@@ -95,7 +97,7 @@ class SenderThread implements Runnable{
             System.out.println("No recording device available, you will be able to recieve but not send voice");
         }
        
-        running = true;
+        
         
         short count = 0;
         while (running){
@@ -108,13 +110,14 @@ class SenderThread implements Runnable{
                 count++;
                 
                   DatagramPacket packet = new DatagramPacket(f.getPacketdata(), f.getPacketdata().length, clientIP, PORT);
+                  sentCount++;
                   sending_socket.send(packet);
             } catch (IOException e){
                 System.err.println("ERROR:IO error occured - Sending thread");
                 e.printStackTrace();
             }
         }
-        
+        recorder.close();
         //Close the socket
         sending_socket.close();
         //***************************************************

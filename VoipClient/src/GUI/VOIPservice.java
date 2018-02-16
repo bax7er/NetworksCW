@@ -40,9 +40,20 @@ public class VOIPservice {
         this.host = hostname;
         
     }
+    public int[] status(){
+        int i = 0;
+        if(receiver.timeout){
+            i = 1;
+        }
+        int j = 0;
+        if(sender.hostFailed){
+            j = 1;
+        }
+        return new int[]{receiver.recCount,sender.sentCount,i,j};
+    }
     public void startVOIP(){
-        ReceiverThread receiver = new ReceiverThread(socket,port,preset);
-        SenderThread sender = new SenderThread(socket,host,port,preset);
+        receiver = new ReceiverThread(socket,port,preset);
+        sender = new SenderThread(socket,host,port,preset);
         
         receiver.start();
         sender.start();
