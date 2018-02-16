@@ -15,15 +15,31 @@ public class PacketReorderer implements Compensator {
 
     Frame[] framearray ;
     int FRAMEARRAYSIZE = 256;
-    int framearrayindex = 0;
+    int framearrayindex = 999;
     Frame lastNulled = null;
+    int initialDelay = 6;
+    int playedFrames =0;
+    
+    public PacketReorderer(){
+        framearray = new Frame[FRAMEARRAYSIZE];
+    }
     @Override
     public void push(Frame f) {
         framearray[f.frameNO%FRAMEARRAYSIZE] = f;
+        //Sets starting point for the index
+        if(playedFrames<initialDelay &&f.frameNO%FRAMEARRAYSIZE<framearrayindex){ 
+            framearrayindex = f.frameNO%FRAMEARRAYSIZE-1;
+        }
     }
 
     @Override
     public Frame[] pop() {
+        if(playedFrames<initialDelay){
+            // allows slight buffering
+            playedFrames++;
+            return new Frame[]{new Frame((short)0,new byte[512])};
+        }
+        playedFrames++;
         framearrayindex++;
         framearrayindex = framearrayindex%FRAMEARRAYSIZE;
         if(framearray[framearrayindex] != null){

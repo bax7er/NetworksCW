@@ -45,7 +45,7 @@ class SenderThread implements Runnable{
         
         // Open sending socket
          try{
-		sending_socket = new DatagramSocket2();
+		sending_socket = new DatagramSocket3();
 	} catch (SocketException e){
                 System.err.println("ERROR: Could not open UDP socket to send from.");
 		e.printStackTrace();
@@ -69,8 +69,6 @@ class SenderThread implements Runnable{
         short count = 0;
         while (running){
             try{
-                Compensator blocky = new BlockInterleaver();
-                for(int i = 0;i<blockCount;i++){
                 byte[] block = recorder.getBlock();
                 
                 if (count > 32767)
@@ -78,27 +76,9 @@ class SenderThread implements Runnable{
                 
                 Frame f = new Frame(count,block);
                 count++;
-                blocky.push(f);
-                }
-                blocky.process();
                 
-                 for(int i = 0;i<blockCount;i++){
-                  Frame f = blocky.pop();
                   DatagramPacket packet = new DatagramPacket(f.getPacketdata(), f.getPacketdata().length, clientIP, PORT);
                   sending_socket.send(packet);
-                 }
-                //Make a DatagramPacket from it, with client address and port number
-                
-                // Scumbag method for socket 4
-               /* for(int i = 0;i<block.length;i+=2){
-                    byte[] subblock={block[i],block[i+1]};
-                     DatagramPacket packet = new DatagramPacket(subblock, subblock.length, clientIP, PORT);
-                      sending_socket.send(packet);
-                }*/
-                
-                //DatagramPacket packet = new DatagramPacket(block, block.length, clientIP, PORT);
-                //Send it
-                //sending_socket.send(packet);
             } catch (IOException e){
                 System.err.println("ERROR:IO error occured - Sending thread");
                 e.printStackTrace();
