@@ -23,7 +23,7 @@ public class RepetitionCompensation {
         if(frameBuffer[0] == null)
             frameBuffer[0] = lastFrame.getHalvedAmp();
         
-        for (int i = 0; i < frameBuffer.length;i++){
+        for (int i = 1; i < frameBuffer.length;i++){
             if(frameBuffer[i] == null)
                 frameBuffer[i] = frameBuffer[i-1].getHalvedAmp();
             
