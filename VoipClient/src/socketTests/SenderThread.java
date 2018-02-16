@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sound.sampled.LineUnavailableException;
-import socketTests.ReceiverThread.socketType;
+import socketTests.ReceiverThread.SocketType;
 import uk.ac.uea.cmp.voip.*;
 
 /**
@@ -28,7 +28,7 @@ class SenderThread implements Runnable{
     public String HOSTNAME = "CMPLEWIN-16";
     public InetAddress clientIP = null;
     public String IP = null;
-    private socketType socketType;
+    private SocketType socketType;
     private ArrayList<String> data;
     public Thread thread;
    
@@ -38,7 +38,7 @@ class SenderThread implements Runnable{
 	thread.start();
     }
     
-    public SenderThread(socketType s,String host,ArrayList<String> data){
+    public SenderThread(SocketType s,String host,ArrayList<String> data){
         socketType = s;
         HOSTNAME = host;
         this.data = data;

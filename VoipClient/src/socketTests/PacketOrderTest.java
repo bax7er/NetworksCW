@@ -6,8 +6,8 @@
 package socketTests;
 
 import java.util.ArrayList;
-import socketTests.ReceiverThread.socketType;
-import static socketTests.ReceiverThread.socketType.*;
+import socketTests.ReceiverThread.SocketType;
+import static socketTests.ReceiverThread.SocketType.*;
 
 /**
  *
@@ -15,7 +15,7 @@ import static socketTests.ReceiverThread.socketType.*;
  */
 public class PacketOrderTest {
     
-    public static void testSocket(socketType socket){
+    public static void testSocket(SocketType socket){
         ArrayList<String> data= new ArrayList();
         for(int i = 0;i<1000;i++){
             data.add(String.valueOf(i));

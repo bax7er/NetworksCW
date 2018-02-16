@@ -1,33 +1,68 @@
-package packetReorderingTest;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package GUI;
 
-
-import CMPC3M06.AudioPlayer;
+import audiotools.AudioPlayer;
+import PacketIntegrityTest.PacketReorderer;
+import audiotools.AudioPlayer.AudioPreset;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import javax.sound.sampled.LineUnavailableException;
 import uk.ac.uea.cmp.voip.*;
 import voipclient.Frame;
+
 /**
  *
- * @author xwd14rfu
+ * @author James Baxter
  */
 class ReceiverThread implements Runnable{
     
     static DatagramSocket receiving_socket;
-    private static final int PORT = 55555;
+    private int PORT = 55555;
+    public enum SocketType{Socket1,Socket2,Socket3,Socket4;
+    public static SocketType getSocket(int i){
+        return SocketType.values()[i];
+    }};
+    private SocketType socketType;
+    public ArrayList<String> data;
+    public Thread thread;
+    private AudioPreset preset;
+    private boolean running;
     
+    public ReceiverThread(SocketType s,int port,AudioPreset a){
+        socketType = s;
+        PORT = port;
+        preset = a;
+    }
     public void start(){
-        Thread thread = new Thread(this);
+        this.thread = new Thread(this);
 	thread.start();
     }
     
+    public void stop(){
+        running = false;
+    }
     public void setUpSocket(){
          try{
-		receiving_socket = new DatagramSocket3(PORT);
+                switch(socketType){
+                    case Socket1: receiving_socket = new DatagramSocket(PORT);
+                    break;
+                    case Socket2: receiving_socket = new DatagramSocket2(PORT);
+                    break;
+                    case Socket3: receiving_socket = new DatagramSocket3(PORT);
+                    break;
+                    case Socket4: receiving_socket = new DatagramSocket4(PORT);
+                    break;
+                    default:receiving_socket = new DatagramSocket(PORT);
+                    break;
+                }
                 receiving_socket.setSoTimeout(500);
 	} catch (SocketException e){
                 System.out.println("ERROR: TextReceiver: Could not open UDP socket to receive from.");
@@ -35,22 +70,12 @@ class ReceiverThread implements Runnable{
                 System.exit(0);
 	}
     }
-    public void setUpPlayer(AudioPlayer player){
-         try {
-            player = new AudioPlayer();
-        } catch (LineUnavailableException ex) {
-           System.err.println("ERROR: Could not open AudioRecorder.");
-           System.out.println("No playback device available");
-           System.exit(0);
-        }
-    }
-    public void run (){
+     public void run (){
           
         setUpSocket();
         AudioPlayer player = null;
-        setUpPlayer(player);
         try {
-            player = new AudioPlayer();
+            player = new AudioPlayer(preset);
         } catch (LineUnavailableException ex) {
            System.err.println("ERROR: Could not open AudioRecorder.");
            System.out.println("No playback device available");
@@ -59,7 +84,7 @@ class ReceiverThread implements Runnable{
         //***************************************************
         //Main loop.
         
-        boolean running = true;
+        running = true;
         PacketReorderer reorder = new PacketReorderer();
         while (running){
             try{

@@ -3,8 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package packetReorderingTest;
-
+package PacketIntegrityTest;
 
 import java.awt.Graphics;
 import java.awt.print.PageFormat;

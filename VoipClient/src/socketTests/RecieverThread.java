@@ -26,18 +26,21 @@ class ReceiverThread implements Runnable{
     
     static DatagramSocket receiving_socket;
     private static final int PORT = 55555;
-    public enum socketType{Socket1,Socket2,Socket3,Socket4};
-    private socketType socketType;
+    public enum SocketType{Socket1,Socket2,Socket3,Socket4;
+    public SocketType getSocket(int i){
+        return SocketType.values()[i+1];
+    }};
+    private SocketType socketType;
     public ArrayList<String> data;
     public Thread thread;
     private LongWrapper timestamp;
     
-    public ReceiverThread(socketType s,ArrayList<String> recievedData){
+    public ReceiverThread(SocketType s,ArrayList<String> recievedData){
         socketType = s;
         data = recievedData;
         timestamp = null;
     }
-    public ReceiverThread(socketType s,ArrayList<String> recievedData,LongWrapper l){
+    public ReceiverThread(SocketType s,ArrayList<String> recievedData,LongWrapper l){
         socketType = s;
         data = recievedData;
         timestamp = l;

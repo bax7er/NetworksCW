@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package packetReorderingTest;
+package PacketIntegrityTest;
 
 import java.util.LinkedList;
 import voipclient.Frame;

@@ -5,15 +5,15 @@
  */
 package socketTests;
 import java.util.ArrayList;
-import socketTests.ReceiverThread.socketType;
-import static socketTests.ReceiverThread.socketType.*;
+import socketTests.ReceiverThread.SocketType;
+import static socketTests.ReceiverThread.SocketType.*;
 /**
  *
  * @author scamp
  */
 public class PacketLossTest {
-    public static void testSocket(socketType s){
-        socketType socket = s;
+    public static void testSocket(SocketType s){
+        SocketType socket = s;
         boolean[] recievedIndicator = new boolean[1000];
         ArrayList<String> data= new ArrayList();
         for(int i = 0;i<1000;i++){

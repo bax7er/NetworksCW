@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class LatencyTest {
     private static int pingCount = 5;
-    public static void testSocket(ReceiverThread.socketType s){
-        ReceiverThread.socketType socket = s;
+    public static void testSocket(ReceiverThread.SocketType s){
+        ReceiverThread.SocketType socket = s;
         
         for(int i = 0;i<pingCount;i++){
         long nanoTime = System.nanoTime();

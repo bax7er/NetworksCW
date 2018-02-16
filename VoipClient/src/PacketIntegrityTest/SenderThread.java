@@ -1,6 +1,9 @@
-package packetReorderingTest;
+package PacketIntegrityTest;
 
-import CMPC3M06.AudioRecorder;
+//import CMPC3M06.AudioRecorder;
+import audiotools.AudioPlayer;
+import audiotools.AudioPlayer.AudioPreset;
+import audiotools.AudioRecorder;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -57,7 +60,7 @@ class SenderThread implements Runnable{
         setUpConnection();
         AudioRecorder recorder = null;
                  try {
-            recorder = new AudioRecorder();
+            recorder = new AudioRecorder(AudioPreset.High);
         } catch (LineUnavailableException ex) {
             System.err.println("ERROR: Could not open AudioRecorder.");
             System.out.println("No recording device available, you will be able to recieve but not send voice");
@@ -65,10 +68,12 @@ class SenderThread implements Runnable{
        
         boolean running = true;
         
+        int blockCount = 9;
         short count = 0;
         while (running){
             try{
                 byte[] block = recorder.getBlock();
+                
                 if (count > 32767)
                     count = 0;
                 
@@ -88,12 +93,4 @@ class SenderThread implements Runnable{
         //***************************************************
     }
 
-    private void setUpAudioRecorder(AudioRecorder recorder) {
-         try {
-            recorder = new AudioRecorder();
-        } catch (LineUnavailableException ex) {
-            System.err.println("ERROR: Could not open AudioRecorder.");
-            System.out.println("No recording device available, you will be able to recieve but not send voice");
-        }
-    }
 }

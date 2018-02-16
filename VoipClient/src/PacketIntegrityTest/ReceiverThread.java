@@ -1,7 +1,9 @@
-package packetReorderingTest;
+package PacketIntegrityTest;
 
 
-import CMPC3M06.AudioPlayer;
+//import CMPC3M06.AudioPlayer;
+import audiotools.AudioPlayer;
+import audiotools.AudioPlayer.AudioPreset;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -35,22 +37,13 @@ class ReceiverThread implements Runnable{
                 System.exit(0);
 	}
     }
-    public void setUpPlayer(AudioPlayer player){
-         try {
-            player = new AudioPlayer();
-        } catch (LineUnavailableException ex) {
-           System.err.println("ERROR: Could not open AudioRecorder.");
-           System.out.println("No playback device available");
-           System.exit(0);
-        }
-    }
+
     public void run (){
           
         setUpSocket();
         AudioPlayer player = null;
-        setUpPlayer(player);
         try {
-            player = new AudioPlayer();
+            player = new AudioPlayer(AudioPreset.High);
         } catch (LineUnavailableException ex) {
            System.err.println("ERROR: Could not open AudioRecorder.");
            System.out.println("No playback device available");

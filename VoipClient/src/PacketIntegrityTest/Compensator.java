@@ -1,4 +1,4 @@
-package packetReorderingTest;
+package PacketIntegrityTest;
 import voipclient.Frame;
 
 /**

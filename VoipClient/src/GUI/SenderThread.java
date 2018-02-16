@@ -1,6 +1,10 @@
-package packetReorderingTest;
+package GUI;
 
-import CMPC3M06.AudioRecorder;
+
+import socketTests.*;
+import audiotools.AudioRecorder;
+import GUI.ReceiverThread.SocketType;
+import audiotools.AudioPlayer.AudioPreset;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,11 +13,14 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sound.sampled.LineUnavailableException;
+
 import uk.ac.uea.cmp.voip.*;
 import voipclient.Frame;
+
 /**
  *
  * @author James Baxter
@@ -21,15 +28,29 @@ import voipclient.Frame;
 class SenderThread implements Runnable{
     
     static DatagramSocket sending_socket;
-    public static final int PORT = 55555; //Port to send to
-    public final String HOSTNAME = "127.0.0.1";
+    public int PORT = 55555; //Port to send to
+    public String HOSTNAME = "CMPLEWIN-16";
     public InetAddress clientIP = null;
     public String IP = null;
-   
+    private SocketType socketType;
+    private ArrayList<String> data;
+    public Thread thread;
+    private AudioPreset preset;
+    private boolean running;
     
     public void start(){
-        Thread thread = new Thread(this);
+        this.thread = new Thread(this);
 	thread.start();
+    }
+    public void stop(){
+        running = false;
+    }
+    
+    public SenderThread(SocketType s,String host,int port,AudioPreset a){
+        socketType = s;
+        HOSTNAME = host;
+        preset = a;
+        PORT = port;
     }
     
     public void setUpConnection(){
@@ -45,7 +66,17 @@ class SenderThread implements Runnable{
         
         // Open sending socket
          try{
-		sending_socket = new DatagramSocket3();
+		 switch(socketType){
+                    case Socket1: sending_socket = new DatagramSocket();
+                    break;
+                    case Socket2: sending_socket = new DatagramSocket2();
+                    break;
+                    case Socket3: sending_socket = new DatagramSocket3();
+                    break;
+                    case Socket4: sending_socket = new DatagramSocket4();
+                    break;
+                    default:sending_socket = new DatagramSocket();
+                    break;}
 	} catch (SocketException e){
                 System.err.println("ERROR: Could not open UDP socket to send from.");
 		e.printStackTrace();
@@ -53,17 +84,18 @@ class SenderThread implements Runnable{
 	}
                
     }
+    @Override
     public void run (){
-        setUpConnection();
+         setUpConnection();
         AudioRecorder recorder = null;
                  try {
-            recorder = new AudioRecorder();
+            recorder = new AudioRecorder(preset);
         } catch (LineUnavailableException ex) {
             System.err.println("ERROR: Could not open AudioRecorder.");
             System.out.println("No recording device available, you will be able to recieve but not send voice");
         }
        
-        boolean running = true;
+        running = true;
         
         short count = 0;
         while (running){
@@ -86,14 +118,5 @@ class SenderThread implements Runnable{
         //Close the socket
         sending_socket.close();
         //***************************************************
-    }
-
-    private void setUpAudioRecorder(AudioRecorder recorder) {
-         try {
-            recorder = new AudioRecorder();
-        } catch (LineUnavailableException ex) {
-            System.err.println("ERROR: Could not open AudioRecorder.");
-            System.out.println("No recording device available, you will be able to recieve but not send voice");
-        }
     }
 }
