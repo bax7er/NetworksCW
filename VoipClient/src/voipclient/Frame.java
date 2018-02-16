@@ -61,8 +61,14 @@ public class Frame implements Comparable<Frame>{
     public Frame getHalvedAmp(){
         Frame halved = new Frame(this);
         byte dif = 2;
-        for (int i = 0; i <512; i++)
-            halved.framedata[i] = (byte) (halved.framedata[i]/dif);
+        for (int i = 0; i <512; i++){
+            ByteBuffer buffer = ByteBuffer.wrap(halved.framedata, 0, 2);
+            short temp = buffer.getShort();
+            temp = (short) (temp/dif);
+            halved.framedata[1] = (byte) (temp & 0xFF);
+            halved.framedata[0] = (byte) ((temp >> 8) & 0xFF);
+            //halved.framedata[i] = (byte) (halved.framedata[i]/dif);
+        }
         return halved;
     }
     

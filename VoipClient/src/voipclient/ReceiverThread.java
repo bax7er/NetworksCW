@@ -57,7 +57,7 @@ class ReceiverThread implements Runnable{
         }
         //***************************************************
         //Main loop.
-        
+        /*
         boolean running = true;
         int blockCount = 9;
         short count = 9;
@@ -81,6 +81,55 @@ class ReceiverThread implements Runnable{
                         done = true;
                     }
                 }while (!done);
+                count+= blockCount;
+                if (count > 32767)
+                    count = 0;
+                /**/
+        
+        boolean running = true;
+        int blockCount = 9;
+        short lowerBound = 0;
+        short upperBound = (short) blockCount;
+        short count = 9;
+        boolean init = true;
+        Frame[] frameBufferNext = new Frame[blockCount];
+        RepetitionCompensation Rep = new RepetitionCompensation();
+        while (running){
+            try{
+                Frame[] frameBuffer = frameBufferNext;
+                frameBufferNext = new Frame[blockCount];
+
+                boolean done = false;
+                do{
+                    byte[] buffer = new byte[514];
+                    DatagramPacket packet = new DatagramPacket(buffer, 0, 514);
+                    receiving_socket.receive(packet);
+                    Frame temp = new Frame(buffer);
+                    short frameNumber = (short) (temp.frameNO/blockCount);
+                    if(init){
+                        lowerBound = (short) (frameNumber* blockCount);
+                        upperBound = (short) (lowerBound+ blockCount);
+                        init = false;
+                    }
+                    if(temp.frameNO > upperBound){
+                        frameBufferNext[temp.frameNO%blockCount] = temp;
+                        done = true;
+                    } else if (temp.frameNO > lowerBound){
+                        frameBuffer[temp.frameNO%blockCount] = temp;
+                    }
+                    
+                    
+                    /*
+                    if(temp.frameNO <count){
+                         frameBuffer[temp.frameNO%blockCount] = temp;
+                    }else{
+                        frameBufferNext[temp.frameNO%blockCount] = temp;
+                        done = true;
+                    }
+                    /**/
+                }while (!done);
+                lowerBound = upperBound;
+                upperBound = (short) (lowerBound+ blockCount);
                 count+= blockCount;
                 if (count > 32767)
                     count = 0;
