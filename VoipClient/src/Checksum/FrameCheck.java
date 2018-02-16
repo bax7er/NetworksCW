@@ -56,7 +56,7 @@ public class FrameCheck implements Comparable<FrameCheck>{
         packetdata[3] = (byte) (frameNO & 0xFF);
         packetdata[2] = (byte) ((frameNO >> 8) & 0xFF);
         
-        Short checksum = 0;
+        short checksum = 0;
         //130-1
         for(int i = 0;i < 125;i++){
             checksum= (short) (checksum + this.framedata[i]);
@@ -109,8 +109,8 @@ public class FrameCheck implements Comparable<FrameCheck>{
             return check;
         }
         
-        Short checksum = 0;
-        Short checksumStar = 0;
+        short checksum = 0;
+        short checksumStar = 0;
         
         //130-1
         for(int i = 4;i < 129;i++){
@@ -118,7 +118,7 @@ public class FrameCheck implements Comparable<FrameCheck>{
         }
         ByteBuffer buffer = ByteBuffer.wrap(packetData, 129, 2);
         checksumStar = buffer.getShort();
-        if(Objects.equals(checksum, checksumStar)){
+        if(checksum == checksumStar){
             check[1] = true;
             System.arraycopy( packetData, 4, framedata, 0, 125 );
         }else
@@ -131,7 +131,7 @@ public class FrameCheck implements Comparable<FrameCheck>{
         }
         buffer = ByteBuffer.wrap(packetData, 260, 2);
         checksumStar = buffer.getShort();
-        if(Objects.equals(checksum, checksumStar)){
+        if(checksum == checksumStar){
             check[2] = true;
             System.arraycopy( packetData, 131, framedata, 125, 129 );
         }else
@@ -144,7 +144,7 @@ public class FrameCheck implements Comparable<FrameCheck>{
         }
         buffer = ByteBuffer.wrap(packetData, 391, 2);
         checksumStar = buffer.getShort();
-        if(Objects.equals(checksum, checksumStar)){
+        if(checksum == checksumStar){
             check[3] = true;
             System.arraycopy( packetData, 262, framedata, 254, 129 );
         }else
@@ -157,7 +157,7 @@ public class FrameCheck implements Comparable<FrameCheck>{
         }
         buffer = ByteBuffer.wrap(packetData, 522, 2);
         checksumStar = buffer.getShort();
-        if(Objects.equals(checksum, checksumStar)){
+        if(checksum == checksumStar){
             check[4] = true;
             System.arraycopy( packetData, 393, framedata, 383, 129 );
         }else
