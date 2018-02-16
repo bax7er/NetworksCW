@@ -27,7 +27,7 @@ class ReceiverThread implements Runnable{
     
     public void setUpSocket(){
          try{
-		receiving_socket = new DatagramSocket2(PORT);
+		receiving_socket = new DatagramSocket3(PORT);
                 receiving_socket.setSoTimeout(500);
 	} catch (SocketException e){
                 System.out.println("ERROR: TextReceiver: Could not open UDP socket to receive from.");
@@ -70,6 +70,7 @@ class ReceiverThread implements Runnable{
                     reorder.push(temp);
                     Frame[] playback = reorder.pop();
                     for(Frame f:playback){
+                        System.out.println("Playing packet: "+f.frameNO);
                        player.playBlock(f.framedata);
                     }
                 //player.playBlock(packet.getData());
