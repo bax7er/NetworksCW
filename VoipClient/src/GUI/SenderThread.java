@@ -1,7 +1,6 @@
 package GUI;
 
 
-import socketTests.*;
 import audiotools.AudioRecorder;
 import GUI.ReceiverThread.SocketType;
 import audiotools.AudioPlayer.AudioPreset;
@@ -39,6 +38,7 @@ class SenderThread implements Runnable{
     private boolean running;
     public int sentCount;
     public boolean hostFailed;
+    private Compensator comp;
     public void start(){
         this.thread = new Thread(this);
 	thread.start();
@@ -47,11 +47,14 @@ class SenderThread implements Runnable{
         running = false;
     }
     
-    public SenderThread(SocketType s,String host,int port,AudioPreset a){
+    public SenderThread(SocketType s,String host,int port,AudioPreset a,int interleaverSize,boolean checkedPackets){
         socketType = s;
         HOSTNAME = host;
         preset = a;
         PORT = port;
+        if(interleaverSize != 0){
+            comp = new AlternativeInterleaver(interleaverSize);
+        }
     }
     
     public void setUpConnection(){
@@ -108,10 +111,22 @@ class SenderThread implements Runnable{
                 
                 Frame f = new Frame(count,block);
                 count++;
-                
-                  DatagramPacket packet = new DatagramPacket(f.getPacketdata(), f.getPacketdata().length, clientIP, PORT);
+                if(comp ==null ){
+                  DatagramPacket packet = new DatagramPacket(f.toByteArray(), f.toByteArray().length, clientIP, PORT);
                   sentCount++;
                   sending_socket.send(packet);
+                }
+                else{
+                    comp.push(f);
+                    Frame[] fr = comp.pop();
+                     if(fr !=null){
+                  DatagramPacket packet = new DatagramPacket(fr[0].toByteArray(), fr[0].toByteArray().length, clientIP, PORT);
+                  sending_socket.send(packet);
+                    }
+                     else{
+                         System.out.println("Missing Data");
+                     }
+                }
             } catch (IOException e){
                 System.err.println("ERROR:IO error occured - Sending thread");
                 e.printStackTrace();

@@ -5,10 +5,6 @@
  */
 package voipclient;
 
-import java.awt.Graphics;
-import java.awt.print.PageFormat;
-import java.awt.print.Printable;
-import java.awt.print.PrinterException;
 import java.nio.ByteBuffer;
 
 /**
@@ -43,7 +39,7 @@ public class Frame implements Comparable<Frame>{
         System.arraycopy( packetdata, 2, framedata, 0, packetdata.length-2 );
     }
     
-    public byte[] getPacketdata(){
+    public byte[] toByteArray(){
         byte[] packetdata = new byte[framedata.length+2];
         //  & 0xFF masks all but the lowest eight bits.
         //  >> 8 discards the lowest 8 bits by moving all bits 8 places to the right

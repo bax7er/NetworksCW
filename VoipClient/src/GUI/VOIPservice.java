@@ -53,7 +53,7 @@ public class VOIPservice {
     }
     public void startVOIP(){
         receiver = new ReceiverThread(socket,port,preset);
-        sender = new SenderThread(socket,host,port,preset);
+        sender = new SenderThread(socket,host,port,preset,3,false);
         
         receiver.start();
         sender.start();

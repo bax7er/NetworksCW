@@ -1,10 +1,7 @@
-package packetReorderingTest;
+package GUI;
 import voipclient.Frame;
 
-/**
- *
- * @author scamp
- */
+
 public interface Compensator {
     
     public abstract void push(Frame f);

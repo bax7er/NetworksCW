@@ -1,9 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package packetReorderingTest;
+package GUI;
 
 import java.util.LinkedList;
 import voipclient.Frame;
@@ -17,7 +12,7 @@ public class PacketReorderer implements Compensator {
     int FRAMEARRAYSIZE = 256;
     int framearrayindex = 999;
     Frame lastNulled = null;
-    int initialDelay = 6;
+    int initialDelay = 10;
     int playedFrames =0;
     
     public PacketReorderer(){
@@ -50,6 +45,7 @@ public class PacketReorderer implements Compensator {
         else{
             //Compensate the repeat;
             LinkedList<Frame> ll = new LinkedList<>();
+            lastNulled = lastNulled.getHalvedAmp();
             ll.add(lastNulled);
             do{
                 framearrayindex++;
@@ -62,7 +58,9 @@ public class PacketReorderer implements Compensator {
                 }
                 else{
                     //Compensate the repeat;
-                    ll.add(lastNulled);
+                    //ll.add(lastNulled);
+                      lastNulled = lastNulled.getHalvedAmp();
+                      ll.add(lastNulled);
                 }
             }
             while(true);
