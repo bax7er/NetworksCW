@@ -44,6 +44,7 @@ class ReceiverThread implements Runnable {
     int packetSize = 514;
     boolean reorderPackets;
     int reorderDelay;
+    boolean repeat;
 
     public ReceiverThread(SocketType s, int port, AudioPreset a) {
         socketType = s;
@@ -61,6 +62,7 @@ class ReceiverThread implements Runnable {
         }
         reorderPackets = settings.reorderPacket;
         reorderDelay = settings.bufferSize;
+        repeat = settings.repeatLastGoodPacket;
     }
 
     public void start() {
@@ -116,6 +118,7 @@ class ReceiverThread implements Runnable {
         running = true;
 
         PacketReorderer reorder = new PacketReorderer();
+        reorder.repeat = repeat;
         reorder.initialDelay = reorderDelay;
         while (running) {
             try {
