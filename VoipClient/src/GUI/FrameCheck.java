@@ -1,21 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package GUI;
 
-import java.awt.Graphics;
-import java.awt.print.PageFormat;
-import java.awt.print.Printable;
-import java.awt.print.PrinterException;
 import java.nio.ByteBuffer;
-import java.util.Objects;
 import voipclient.Frame;
 
 /**
  *
- * @author Baxter
+ * @author James Baxter & Shaun Leeks
  */
 public class FrameCheck extends Frame {
 

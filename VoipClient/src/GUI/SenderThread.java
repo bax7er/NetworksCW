@@ -22,17 +22,16 @@ import voipclient.Frame;
 
 /**
  *
- * @author James Baxter
+ * @author James Baxter & Shaun Leeks
  */
 class SenderThread implements Runnable{
     
     static DatagramSocket sending_socket;
     public int PORT = 55555; //Port to send to
-    public String HOSTNAME = "CMPLEWIN-16";
+    public String HOSTNAME;
     public InetAddress clientIP = null;
     public String IP = null;
     private SocketType socketType;
-    private ArrayList<String> data;
     public Thread thread;
     private AudioPreset preset;
     private boolean running;
@@ -48,13 +47,14 @@ class SenderThread implements Runnable{
         running = false;
     }
     
+    @Deprecated
     public SenderThread(SocketType s,String host,int port,AudioPreset a,int interleaverSize,boolean checkedPackets){
         socketType = s;
         HOSTNAME = host;
         preset = a;
         PORT = port;
         if(interleaverSize != 0){
-            comp = new AlternativeInterleaver(interleaverSize);
+            comp = new Interleaver(interleaverSize);
         }
     }
     public SenderThread(VOIPSettings settings){
@@ -63,7 +63,7 @@ class SenderThread implements Runnable{
         preset = AudioPreset.getPreset(settings.bitrate);
         PORT = settings.port;
         if(settings.interleave){
-            comp = new AlternativeInterleaver(settings.interleaverSize);
+            comp = new Interleaver(settings.interleaverSize);
         }
         if(settings.checksumPacket){
             generateChecksums = true;

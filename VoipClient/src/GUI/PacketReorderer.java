@@ -5,7 +5,7 @@ import voipclient.Frame;
 
 /**
  *
- * @author Baxter
+ * @author James Baxter
  */
 public class PacketReorderer implements Compensator {
 
@@ -78,14 +78,5 @@ public class PacketReorderer implements Compensator {
 
     }
 
-    @Override
-    public void process() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public int getLength() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 
 }

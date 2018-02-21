@@ -1,15 +1,12 @@
-
 package GUI;
 
-import static java.lang.Math.sqrt;
-import java.util.ArrayList;
 import voipclient.Frame;
 
 /**
- *
- * @author scamp
+ * Packet interleaver Version 2
+ * @author James Baxter & Shaun Leeks
  */
-public class AlternativeInterleaver implements Compensator {
+public class Interleaver implements Compensator {
     private int[] depth;
     private int depthArrayPTR = 0;
     private Frame[] frameBlock;
@@ -18,7 +15,7 @@ public class AlternativeInterleaver implements Compensator {
     private static final int[] DEPTH2 = {1,3,0,2};
     private static final int[] DEPTH3 = {2,5,8,1,4,7,0,3,6};
     
-    public AlternativeInterleaver(int i_depth){
+    public Interleaver(int i_depth){
         blockSize = i_depth*i_depth;
         frameBlock = new Frame[blockSize];
          switch (i_depth) {
@@ -63,11 +60,5 @@ public class AlternativeInterleaver implements Compensator {
             return null;
         }
     };
-    public int getLength(){return 0;};
-
-    @Override
-    public void process() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 
 }

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package GUI;
 
 import audiotools.AudioPlayer;
@@ -19,7 +14,7 @@ import voipclient.Frame;
 
 /**
  *
- * @author James Baxter
+ * @author James Baxter & Shaun Leek
  */
 class ReceiverThread implements Runnable {
 
@@ -46,6 +41,7 @@ class ReceiverThread implements Runnable {
     int reorderDelay;
     boolean repeat;
 
+    @Deprecated
     public ReceiverThread(SocketType s, int port, AudioPreset a) {
         socketType = s;
         PORT = port;
