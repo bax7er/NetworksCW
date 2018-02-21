@@ -12,7 +12,7 @@ public class PacketReorderer implements Compensator {
     int FRAMEARRAYSIZE = 256;
     int framearrayindex = 999;
     Frame lastNulled = null;
-    int initialDelay = 10;
+    int initialDelay;
     int playedFrames =0;
     
     public PacketReorderer(){

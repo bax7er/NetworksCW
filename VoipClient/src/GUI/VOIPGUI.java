@@ -19,6 +19,7 @@ import javax.swing.table.JTableHeader;
 public class VOIPGUI extends javax.swing.JFrame {
 
     public VOIPservice voip;
+    public VOIPSettings settings = null;
 
     public VOIPGUI() {
         initComponents();
@@ -49,6 +50,7 @@ public class VOIPGUI extends javax.swing.JFrame {
         portSelection = new javax.swing.JFormattedTextField();
         bottomPanel = new javax.swing.JPanel();
         jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
         topPanel = new javax.swing.JPanel();
         welcomeLabelSemesterSelect = new javax.swing.JLabel();
 
@@ -175,6 +177,22 @@ public class VOIPGUI extends javax.swing.JFrame {
             }
         });
 
+        jButton3.setBackground(new java.awt.Color(42, 128, 185));
+        jButton3.setForeground(new java.awt.Color(255, 255, 255));
+        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/settings.png"))); // NOI18N
+        jButton3.setBorder(null);
+        jButton3.setMaximumSize(new java.awt.Dimension(999, 999));
+        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton3MouseClicked(evt);
+            }
+        });
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout bottomPanelLayout = new javax.swing.GroupLayout(bottomPanel);
         bottomPanel.setLayout(bottomPanelLayout);
         bottomPanelLayout.setHorizontalGroup(
@@ -182,13 +200,17 @@ public class VOIPGUI extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
-                .addGap(860, 860, 860))
+                .addGap(740, 740, 740)
+                .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
+                .addContainerGap())
         );
         bottomPanelLayout.setVerticalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(bottomPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
+                .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -242,8 +264,20 @@ public class VOIPGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2MouseClicked
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        
         int bitrate = bitrateselection.getSelectedIndex();
         int socket = socketSelection.getSelectedIndex();
+        
+        if(settings == null){
+            settings = new VOIPSettings();
+            settings.socket = socketSelection.getSelectedIndex();
+            settings.generateDefault();
+        }
+        else if(settings.socket != socketSelection.getSelectedIndex()){
+            settings.socket = socketSelection.getSelectedIndex();
+            settings.generateDefault();
+        }
+        
         try {
             portSelection.commitEdit();
         } catch (ParseException ex) {
@@ -251,10 +285,47 @@ public class VOIPGUI extends javax.swing.JFrame {
         }
         int port = Integer.parseInt(portSelection.getValue().toString());
         String hostname = hostSelection.getText();
-        voip = new VOIPservice(hostname,port,socket,bitrate);
+        settings.hostname = hostname;
+        settings.port = port;
+        settings.bitrate = bitrate;
+        System.out.println(settings.bufferSize);
+        voip = new VOIPservice(settings);
         new CallGUI(voip,this).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton3MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton3MouseClicked
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    int bitrate = bitrateselection.getSelectedIndex();
+        int socket = socketSelection.getSelectedIndex();
+        
+        if(settings == null){
+            settings = new VOIPSettings();
+            settings.socket = socketSelection.getSelectedIndex();
+            settings.generateDefault();
+        }
+        else if(settings.socket != socketSelection.getSelectedIndex()){
+            settings.socket = socketSelection.getSelectedIndex();
+            settings.generateDefault();
+        }
+        
+        try {
+            portSelection.commitEdit();
+        } catch (ParseException ex) {
+            Logger.getLogger(VOIPGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        int port = Integer.parseInt(portSelection.getValue().toString());
+        String hostname = hostSelection.getText();
+        settings.hostname = hostname;
+        settings.port = port;
+        settings.bitrate = bitrate;
+        System.out.println(settings.bufferSize);
+        new SettingsGUI(settings,this).setVisible(true);
+    this.setVisible(false);// TODO add your handling code here:
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -304,6 +375,7 @@ public class VOIPGUI extends javax.swing.JFrame {
     private javax.swing.JLabel fileInfoText4;
     private javax.swing.JTextField hostSelection;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JFormattedTextField portSelection;
     private javax.swing.JComboBox<String> socketSelection;

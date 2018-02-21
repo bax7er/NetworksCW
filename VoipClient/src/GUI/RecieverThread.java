@@ -21,14 +21,18 @@ import voipclient.Frame;
  *
  * @author James Baxter
  */
-class ReceiverThread implements Runnable{
-    
+class ReceiverThread implements Runnable {
+
     static DatagramSocket receiving_socket;
     private int PORT = 55555;
-    public enum SocketType{Socket1,Socket2,Socket3,Socket4;
-    public static SocketType getSocket(int i){
-        return SocketType.values()[i];
-    }};
+
+    public enum SocketType {
+        Socket1, Socket2, Socket3, Socket4;
+
+        public static SocketType getSocket(int i) {
+            return SocketType.values()[i];
+        }
+    };
     private SocketType socketType;
     public ArrayList<String> data;
     public Thread thread;
@@ -36,75 +40,112 @@ class ReceiverThread implements Runnable{
     private boolean running;
     public int recCount;
     public boolean timeout = false;
-    
-    public ReceiverThread(SocketType s,int port,AudioPreset a){
+    boolean checkedFrames = false;
+    int packetSize = 514;
+    boolean reorderPackets;
+    int reorderDelay;
+
+    public ReceiverThread(SocketType s, int port, AudioPreset a) {
         socketType = s;
         PORT = port;
         preset = a;
     }
-    public void start(){
-        this.thread = new Thread(this);
-	thread.start();
+
+    public ReceiverThread(VOIPSettings settings) {
+        socketType = SocketType.getSocket(settings.socket);
+        PORT = settings.port;
+        preset = AudioPreset.getPreset(settings.bitrate);
+        checkedFrames = settings.checksumPacket;
+        if (checkedFrames) {
+            packetSize = 524;
+        }
+        reorderPackets = settings.reorderPacket;
+        reorderDelay = settings.bufferSize;
     }
-    
-    public void stop(){
+
+    public void start() {
+        this.thread = new Thread(this);
+        thread.start();
+    }
+
+    public void stop() {
         running = false;
     }
-    public void setUpSocket(){
-         try{
-                switch(socketType){
-                    case Socket1: receiving_socket = new DatagramSocket(PORT);
+
+    public void setUpSocket() {
+        try {
+            switch (socketType) {
+                case Socket1:
+                    receiving_socket = new DatagramSocket(PORT);
                     break;
-                    case Socket2: receiving_socket = new DatagramSocket2(PORT);
+                case Socket2:
+                    receiving_socket = new DatagramSocket2(PORT);
                     break;
-                    case Socket3: receiving_socket = new DatagramSocket3(PORT);
+                case Socket3:
+                    receiving_socket = new DatagramSocket3(PORT);
                     break;
-                    case Socket4: receiving_socket = new DatagramSocket4(PORT);
+                case Socket4:
+                    receiving_socket = new DatagramSocket4(PORT);
                     break;
-                    default:receiving_socket = new DatagramSocket(PORT);
+                default:
+                    receiving_socket = new DatagramSocket(PORT);
                     break;
-                }
-                receiving_socket.setSoTimeout(500);
-	} catch (SocketException e){
-                System.out.println("ERROR: TextReceiver: Could not open UDP socket to receive from.");
-		e.printStackTrace();
-                System.exit(0);
-	}
+            }
+            receiving_socket.setSoTimeout(500);
+        } catch (SocketException e) {
+            System.out.println("ERROR: TextReceiver: Could not open UDP socket to receive from.");
+            e.printStackTrace();
+            System.exit(0);
+        }
     }
-     public void run (){
-          
+
+    public void run() {
+
         setUpSocket();
         AudioPlayer player = null;
         try {
             player = new AudioPlayer(preset);
         } catch (LineUnavailableException ex) {
-           System.err.println("ERROR: Could not open AudioRecorder.");
-           System.out.println("No playback device available");
-           System.exit(0);
+            System.err.println("ERROR: Could not open AudioRecorder.");
+            System.out.println("No playback device available");
+            System.exit(0);
         }
         //***************************************************
         //Main loop.
-        
+
         running = true;
+
         PacketReorderer reorder = new PacketReorderer();
-        while (running){
-            try{
-                    byte[] buffer = new byte[514];
-                    DatagramPacket packet = new DatagramPacket(buffer, 0, 514);
-                    receiving_socket.receive(packet);
-                    recCount++;
-                    timeout = false;
-                    Frame temp = new Frame(buffer);
+        reorder.initialDelay = reorderDelay;
+        while (running) {
+            try {
+                byte[] buffer = new byte[packetSize];
+                DatagramPacket packet = new DatagramPacket(buffer, 0, 514);
+                receiving_socket.receive(packet);
+                recCount++;
+                timeout = false;
+                Frame temp;
+                if (checkedFrames) {
+                    temp = new FrameCheck(buffer);
+                    //COMPENSATE FOR FRAME CORRUPTION HERE
+                } else {
+                    temp = new Frame(buffer);
+                }
+
+                if (reorderPackets) {
                     reorder.push(temp);
                     Frame[] playback = reorder.pop();
-                    for(Frame f:playback){
-                        System.out.println("Playing packet: "+f.frameNO);
-                       player.playBlock(f.framedata);
+                    for (Frame f : playback) {
+                        System.out.println("Playing packet: " + f.frameNO);
+                        player.playBlock(f.framedata);
                     }
-                //player.playBlock(packet.getData());
-            }catch (SocketTimeoutException e) {
-                timeout=true;
-            } catch (IOException e){
+                } else {
+                    player.playBlock(temp.framedata);
+                }
+                //
+            } catch (SocketTimeoutException e) {
+                timeout = true;
+            } catch (IOException e) {
                 System.err.println("ERROR:IO error occured - Reciever thread");
                 e.printStackTrace();
             }

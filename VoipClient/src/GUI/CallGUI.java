@@ -30,7 +30,7 @@ public class CallGUI extends javax.swing.JFrame {
         
         time = new Timer(1000,new List());
         time.start();
-        callerName.setText(voip.host);
+        callerName.setText(voip.settings.hostname);
         
     }
 

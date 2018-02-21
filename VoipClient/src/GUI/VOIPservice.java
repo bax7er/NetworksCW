@@ -15,13 +15,17 @@ import java.util.logging.Logger;
  * @author scamp
  */
 public class VOIPservice {
-    String host;
-    int port;
     SocketType socket;
     AudioPreset preset;
     private ReceiverThread receiver;
     private SenderThread sender;
+    public VOIPSettings settings;
     public VOIPservice(String hostname,int port,int socket,int preset){
+        this.settings = new VOIPSettings();
+        settings.hostname = hostname;
+        settings.port = port;
+        settings.socket = socket;
+        settings.bitrate = preset;
         switch(preset){
             case 0:
                 this.preset = AudioPreset.Standard;
@@ -35,10 +39,11 @@ public class VOIPservice {
              default:
                  this.preset = AudioPreset.Standard;
         }
-        this.port = port;
         this.socket = SocketType.getSocket(socket);
-        this.host = hostname;
         
+    }
+    public VOIPservice(VOIPSettings settings){
+        this.settings = settings;
     }
     public int[] status(){
         int i = 0;
@@ -52,8 +57,8 @@ public class VOIPservice {
         return new int[]{receiver.recCount,sender.sentCount,i,j};
     }
     public void startVOIP(){
-        receiver = new ReceiverThread(socket,port,preset);
-        sender = new SenderThread(socket,host,port,preset,3,false);
+        receiver = new ReceiverThread(settings);
+        sender = new SenderThread(settings);
         
         receiver.start();
         sender.start();

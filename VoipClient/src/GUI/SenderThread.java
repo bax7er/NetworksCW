@@ -39,6 +39,7 @@ class SenderThread implements Runnable{
     public int sentCount;
     public boolean hostFailed;
     private Compensator comp;
+    boolean generateChecksums = false;
     public void start(){
         this.thread = new Thread(this);
 	thread.start();
@@ -54,6 +55,18 @@ class SenderThread implements Runnable{
         PORT = port;
         if(interleaverSize != 0){
             comp = new AlternativeInterleaver(interleaverSize);
+        }
+    }
+    public SenderThread(VOIPSettings settings){
+        socketType = SocketType.getSocket(settings.socket);
+        HOSTNAME = settings.hostname;
+        preset = AudioPreset.getPreset(settings.bitrate);
+        PORT = settings.port;
+        if(settings.interleave){
+            comp = new AlternativeInterleaver(settings.interleaverSize);
+        }
+        if(settings.checksumPacket){
+            generateChecksums = true;
         }
     }
     
@@ -108,8 +121,13 @@ class SenderThread implements Runnable{
                 byte[] block = recorder.getBlock();
                 if (count > 32767)
                     count = 0;
-                
-                Frame f = new Frame(count,block);
+                Frame f;
+                if(generateChecksums){
+                    f= new FrameCheck(count,block);
+                }
+                else{
+                f = new Frame(count,block);
+                }
                 count++;
                 if(comp ==null ){
                   DatagramPacket packet = new DatagramPacket(f.toByteArray(), f.toByteArray().length, clientIP, PORT);
@@ -121,6 +139,7 @@ class SenderThread implements Runnable{
                     Frame[] fr = comp.pop();
                      if(fr !=null){
                   DatagramPacket packet = new DatagramPacket(fr[0].toByteArray(), fr[0].toByteArray().length, clientIP, PORT);
+                  sentCount++;
                   sending_socket.send(packet);
                     }
                      else{

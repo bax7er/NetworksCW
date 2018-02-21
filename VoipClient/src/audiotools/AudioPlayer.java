@@ -17,13 +17,17 @@ import javax.sound.sampled.SourceDataLine;
 public class AudioPlayer
 {
   public enum AudioPreset{
-      High(new AudioFormat(16000.0F, 16, 1, true, false)),
       Standard( new AudioFormat(8000.0F, 16, 1, true, false)),
-      Low(new AudioFormat(4000.0F, 16, 1, true, false));
+      Low(new AudioFormat(4000.0F, 16, 1, true, false)),
+      High(new AudioFormat(16000.0F, 16, 1, true, false));
+
+        public static AudioPreset getPreset(int i) {
+          return AudioPreset.values()[i];  
+        }
   public AudioFormat preset;
   AudioPreset(AudioFormat a){
       this.preset = a;
-  }};
+  } };
   private AudioFormat linearFormat;
   private SourceDataLine sourceDataLine;
   protected ArrayList<byte[]> cached;
