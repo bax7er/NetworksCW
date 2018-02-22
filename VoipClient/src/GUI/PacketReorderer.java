@@ -1,7 +1,6 @@
 package GUI;
 
 import java.util.LinkedList;
-import voipclient.Frame;
 
 /**
  *

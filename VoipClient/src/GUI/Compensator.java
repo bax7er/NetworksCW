@@ -1,5 +1,4 @@
 package GUI;
-import voipclient.Frame;
 
 
 public interface Compensator {

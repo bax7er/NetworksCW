@@ -8,9 +8,9 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import javax.sound.sampled.LineUnavailableException;
 import uk.ac.uea.cmp.voip.*;
-import voipclient.Frame;
 
 /**
  *
@@ -55,6 +55,9 @@ class ReceiverThread implements Runnable {
         checkedFrames = settings.checksumPacket;
         if (checkedFrames) {
             packetSize = 524;
+        }
+        else{
+            packetSize=514;
         }
         reorderPackets = settings.reorderPacket;
         reorderDelay = settings.bufferSize;
@@ -114,19 +117,23 @@ class ReceiverThread implements Runnable {
         running = true;
 
         PacketReorderer reorder = new PacketReorderer();
+        PacketFixer fixer = new PacketFixer();
+        fixer.repeat = repeat;
         reorder.repeat = repeat;
         reorder.initialDelay = reorderDelay;
         while (running) {
             try {
                 byte[] buffer = new byte[packetSize];
-                DatagramPacket packet = new DatagramPacket(buffer, 0, 514);
+                DatagramPacket packet = new DatagramPacket(buffer, 0, packetSize);
                 receiving_socket.receive(packet);
                 recCount++;
                 timeout = false;
                 Frame temp;
                 if (checkedFrames) {
-                    temp = new FrameCheck(buffer);
                     //COMPENSATE FOR FRAME CORRUPTION HERE
+                    FrameCheck fc = new FrameCheck(buffer);        
+                    fixer.push(new FrameCheck(buffer));
+                    temp = fixer.pop()[0];
                 } else {
                     temp = new Frame(buffer);
                 }

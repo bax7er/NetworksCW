@@ -51,7 +51,7 @@ public class VOIPSettings {
                 reorderPacket=false;
                 interleaverSize=0;
                 bufferSize=0;
-                repeatLastGoodPacket=true;
+                repeatLastGoodPacket=false;
                 break;
             default:
                 interleave=false;

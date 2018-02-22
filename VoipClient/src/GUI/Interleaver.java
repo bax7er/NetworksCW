@@ -1,6 +1,5 @@
 package GUI;
 
-import voipclient.Frame;
 
 /**
  * Packet interleaver Version 2

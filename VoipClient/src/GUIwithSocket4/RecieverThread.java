@@ -87,6 +87,7 @@ class ReceiverThread implements Runnable{
         
         running = true;
         PacketFixer fixer = new PacketFixer();
+        fixer.repeat = false;
         while (running){
             try{
                     byte[] buffer = new byte[524];

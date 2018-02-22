@@ -1,7 +1,6 @@
 package GUI;
 
 import java.nio.ByteBuffer;
-import voipclient.Frame;
 
 /**
  *
@@ -48,7 +47,7 @@ public class FrameCheck extends Frame {
         System.arraycopy(packetdata, 264, framedata, 256, 128);
         System.arraycopy(packetdata, 394, framedata, 384, 128);
         
-        generateChecksums();
+        //generateChecksums();
     }
 
     /**
@@ -114,7 +113,13 @@ public class FrameCheck extends Frame {
         else{
             valid[0] = true;
             for(int i = 1;i<=4;i++){
-                valid[i] = (checkSums[i-1]==generateChecksums(i-1));
+                if(checkSums[i-1]==generateChecksums(i-1)){
+                    valid[i] =true;
+                }
+                else{
+                    valid[i]=false;
+                    System.out.println("FAILED CHUNK");
+                }
             }
         }
         return valid;
@@ -131,15 +136,39 @@ public class FrameCheck extends Frame {
             checkSums[i]=generateChecksums(i);
         }
     }
+    
     private short generateChecksums(int quarter) {
-
 
             short checksum = 0;
             int start = quarter * 128;
             int end = (quarter + 1) * 128;
             for (int i = start; i < end; i++) {
-                checksum = (short) (checksum + this.framedata[i]);
+                checksum = (short) (checksum + (this.framedata[i]*i));
             }
             return checksum;
+    }
+    
+    public void zeroQuarter(int quarter){
+        int start = quarter * 128;
+        int end = (quarter + 1) * 128;
+        
+        for (int i = start; i <end; i++){
+            this.framedata[i] = 0;
+        }
+    }
+    
+    public void halveQuarter(int quarterDest, FrameCheck frameSource, int quarterSource){
+        byte dif = 2;
+        int startSource = quarterSource * 128;
+        int startDest = quarterDest * 128;
+        ByteBuffer buffer;
+        
+        for (int i = 0; i <128; i+=2){
+            buffer = ByteBuffer.wrap(frameSource.framedata, startSource + i, 2);
+            short temp = buffer.getShort();
+            temp = (short) (temp/dif);
+            this.framedata[startDest+ i + 1] = (byte) (temp & 0xFF);
+            this.framedata[startDest + i] = (byte) ((temp >> 8) & 0xFF);
+        }
     }
 }
