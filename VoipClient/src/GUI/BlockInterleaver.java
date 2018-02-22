@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package voipclient;
+package GUI;
 
 import static java.lang.Math.sqrt;
 import java.util.ArrayList;
@@ -52,13 +52,13 @@ public class BlockInterleaver implements Compensator {
         }
     };
     
-    public Frame pop()
+    public Frame[] pop()
     { 
         Frame toReturn = framedata.get(depth[counter++]);
         if(counter == depth.length){
             framedata.clear();
         }
-        return toReturn;
+        return new Frame[]{toReturn};
     };
     public int getLength(){return 0;};
     public BlockInterleaver(){

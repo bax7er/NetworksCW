@@ -5,7 +5,6 @@
  */
 package GUI;
 
-import voipclient.*;
 import java.nio.ByteBuffer;
 
 /**

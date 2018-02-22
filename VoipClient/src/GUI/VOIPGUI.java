@@ -1,16 +1,10 @@
 package GUI;
 
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.CardLayout;;
 import java.text.ParseException;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 
 /**
  *
