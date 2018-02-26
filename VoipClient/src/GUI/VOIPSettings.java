@@ -16,6 +16,7 @@ public class VOIPSettings {
     int port;
     int bitrate;
     int socket;
+    boolean extraData;
     String hostname;
     
     void generateDefault(){
@@ -27,6 +28,7 @@ public class VOIPSettings {
                 interleaverSize=0;
                 bufferSize=0;
                 repeatLastGoodPacket=false;
+                extraData = false;
                 break;
             case 1:
                 interleave=true;
@@ -35,6 +37,7 @@ public class VOIPSettings {
                 interleaverSize=3;
                 bufferSize=9;
                 repeatLastGoodPacket=true;
+                extraData = false;
                 break;
             case 2:
                 interleave=false;
@@ -43,6 +46,7 @@ public class VOIPSettings {
                 interleaverSize=0;
                 bufferSize=6;
                 repeatLastGoodPacket=true;
+                extraData = false;
                 break;
             case 3:
                 interleave=false;
@@ -51,6 +55,7 @@ public class VOIPSettings {
                 interleaverSize=0;
                 bufferSize=0;
                 repeatLastGoodPacket=false;
+                extraData = false;
                 break;
             default:
                 interleave=false;
@@ -59,6 +64,7 @@ public class VOIPSettings {
                 interleaverSize=0;
                 bufferSize=0;
                 repeatLastGoodPacket=false;
+                extraData = false;
                 break;
         }
     }

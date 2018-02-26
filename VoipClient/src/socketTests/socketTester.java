@@ -17,13 +17,13 @@ public class socketTester {
 
     public static void main(String[] args){
         System.out.println("*** TESTING SOCKET 1 ***");
-       // runSocketTest(Socket1);
+       runSocketTest(Socket1);
         System.out.println("*** TESTING SOCKET 2 ***");
        // runSocketTest(Socket2);
         System.out.println("*** TESTING SOCKET 3 ***");
        // runSocketTest(Socket3);
         System.out.println("*** TESTING SOCKET 4 ***");
-        runSocketTest(Socket4);
+        //runSocketTest(Socket4);
     }
     static void runSocketTest(ReceiverThread.SocketType s){
         PacketLossTest.testSocket(s);

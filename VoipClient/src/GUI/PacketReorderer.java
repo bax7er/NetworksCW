@@ -15,6 +15,8 @@ public class PacketReorderer implements Compensator {
     int initialDelay;
     int playedFrames = 0;
     boolean repeat = true;
+    boolean extraData;
+    boolean reused= false;
     Frame blank = new Frame((short) 0, new byte[512]);
 
     public PacketReorderer() {
@@ -43,9 +45,17 @@ public class PacketReorderer implements Compensator {
         if (framearray[framearrayindex] != null) {
             lastNulled = framearray[framearrayindex];
             framearray[framearrayindex] = null;
+            reused = false;
             return new Frame[]{lastNulled};
-        } else {
+        }if(extraData && !reused){
+            System.out.println("LOWQUALITYFRAME");
+            reused = true;
+            ADVFrame adv = (ADVFrame)lastNulled;
+            lastNulled = new Frame((short)999,adv.decompressNext());
+            return new Frame[]{lastNulled};
+        }else {
             //Compensate the repeat;
+            System.out.println("REPEATING");
             LinkedList<Frame> ll = new LinkedList<>();
             lastNulled = lastNulled.getHalvedAmp();
             if (repeat) {

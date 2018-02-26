@@ -33,6 +33,7 @@ class SenderThread implements Runnable{
     public boolean hostFailed;
     private Compensator comp;
     boolean generateChecksums = false;
+    boolean addNextFrameData;
     public void start(){
         this.thread = new Thread(this);
 	thread.start();
@@ -56,6 +57,7 @@ class SenderThread implements Runnable{
         HOSTNAME = settings.hostname;
         preset = AudioPreset.getPreset(settings.bitrate);
         PORT = settings.port;
+        addNextFrameData = settings.extraData;
         if(settings.interleave){
             comp = new Interleaver(settings.interleaverSize);
         }
@@ -110,6 +112,7 @@ class SenderThread implements Runnable{
         
         
         short count = 0;
+        byte[] lastBlock = new byte[512];
         while (running){
             try{
                 byte[] block = recorder.getBlock();
@@ -119,6 +122,12 @@ class SenderThread implements Runnable{
                 if(generateChecksums){
                     FrameCheck fc = new FrameCheck(count,block);
                     f= fc;
+                }
+                else if(addNextFrameData){
+                   ADVFrame adv = new ADVFrame(count,lastBlock);
+                   adv.addNext(block);
+                   lastBlock = block;
+                   f = adv;
                 }
                 else{
                 f = new Frame(count,block);

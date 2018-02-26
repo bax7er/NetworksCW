@@ -39,6 +39,7 @@ class ReceiverThread implements Runnable {
     boolean reorderPackets;
     int reorderDelay;
     boolean repeat;
+    boolean addNextFrameData = false;
 
     @Deprecated
     public ReceiverThread(SocketType s, int port, AudioPreset a) {
@@ -52,11 +53,14 @@ class ReceiverThread implements Runnable {
         PORT = settings.port;
         preset = AudioPreset.getPreset(settings.bitrate);
         checkedFrames = settings.checksumPacket;
+        addNextFrameData = settings.extraData;
         if (checkedFrames) {
             packetSize = 524;
-        }
-        else{
-            packetSize=514;
+        } else if (addNextFrameData) {
+            //packetSize = 642;
+            packetSize = 770;
+        } else {
+            packetSize = 514;
         }
         reorderPackets = settings.reorderPacket;
         reorderDelay = settings.bufferSize;
@@ -120,6 +124,7 @@ class ReceiverThread implements Runnable {
         fixer.repeat = repeat;
         reorder.repeat = repeat;
         reorder.initialDelay = reorderDelay;
+        reorder.extraData = addNextFrameData;
         while (running) {
             try {
                 byte[] buffer = new byte[packetSize];
@@ -130,9 +135,12 @@ class ReceiverThread implements Runnable {
                 Frame temp;
                 if (checkedFrames) {
                     //COMPENSATE FOR FRAME CORRUPTION HERE
-                    FrameCheck fc = new FrameCheck(buffer);        
+                    FrameCheck fc = new FrameCheck(buffer);
                     fixer.push(new FrameCheck(buffer));
                     temp = fixer.pop()[0];
+                }
+                if (addNextFrameData) {
+                    temp = new ADVFrame(buffer);
                 } else {
                     temp = new Frame(buffer);
                 }
@@ -141,7 +149,7 @@ class ReceiverThread implements Runnable {
                     reorder.push(temp);
                     Frame[] playback = reorder.pop();
                     for (Frame f : playback) {
-                        System.out.println("Playing packet: " + f.frameNO);
+                        //System.out.println("Playing packet: " + f.frameNO);
                         player.playBlock(f.framedata);
                     }
                 } else {

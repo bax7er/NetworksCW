@@ -17,6 +17,7 @@ public class SettingsGUI extends javax.swing.JFrame {
         this.parent = parent;
         
         interleave.setSelected(settings.interleave);
+        extraData.setSelected(settings.extraData);
         blockDepth.getModel().setValue(settings.interleaverSize);
         checkSum.setSelected(settings.checksumPacket);
         reorder.setSelected(settings.reorderPacket);
@@ -51,6 +52,8 @@ public class SettingsGUI extends javax.swing.JFrame {
         jLabel8 = new javax.swing.JLabel();
         blockDepth = new javax.swing.JSpinner();
         checkSum = new javax.swing.JCheckBox();
+        jLabel9 = new javax.swing.JLabel();
+        extraData = new javax.swing.JCheckBox();
         bottomPanel = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         topPanel = new javax.swing.JPanel();
@@ -101,6 +104,10 @@ public class SettingsGUI extends javax.swing.JFrame {
         blockDepth.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         blockDepth.setModel(new javax.swing.SpinnerNumberModel(2, 2, null, 1));
 
+        jLabel9.setFont(new java.awt.Font("Segoe UI Light", 1, 18)); // NOI18N
+        jLabel9.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel9.setText("Add compressed next frame");
+
         javax.swing.GroupLayout bodyPanelLayout = new javax.swing.GroupLayout(bodyPanel);
         bodyPanel.setLayout(bodyPanelLayout);
         bodyPanelLayout.setHorizontalGroup(
@@ -133,7 +140,11 @@ public class SettingsGUI extends javax.swing.JFrame {
                         .addGap(48, 48, 48)
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(bufferSize, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(bufferSize, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(bodyPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel9)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(extraData)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         bodyPanelLayout.setVerticalGroup(
@@ -151,7 +162,11 @@ public class SettingsGUI extends javax.swing.JFrame {
                 .addGroup(bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel6)
                     .addComponent(checkSum))
-                .addGap(45, 45, 45)
+                .addGap(9, 9, 9)
+                .addGroup(bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel9)
+                    .addComponent(extraData))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel3)
                 .addGap(7, 7, 7)
                 .addGroup(bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -268,6 +283,7 @@ public class SettingsGUI extends javax.swing.JFrame {
        settings.checksumPacket=checkSum.isSelected();
        settings.reorderPacket=reorder.isSelected();
        settings.bufferSize = (Integer)bufferSize.getValue();
+       settings.extraData = extraData.isSelected();
        if(correctiontech.getSelectedIndex()==0){
            settings.repeatLastGoodPacket=true;
        }
@@ -321,6 +337,7 @@ public class SettingsGUI extends javax.swing.JFrame {
     private javax.swing.JLabel callerName;
     private javax.swing.JCheckBox checkSum;
     private javax.swing.JComboBox<String> correctiontech;
+    private javax.swing.JCheckBox extraData;
     private javax.swing.JCheckBox interleave;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
@@ -331,6 +348,7 @@ public class SettingsGUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JCheckBox reorder;
     private javax.swing.JPanel topPanel;
     // End of variables declaration//GEN-END:variables
