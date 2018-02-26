@@ -22,12 +22,14 @@ public class PacketIntegrityTest {
         byte[] midPacket ={0,0,0,0};//4
         byte[] midPacket2 ={0,0,0,0,0,0,0,0};//8
         byte[] longPacket ={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};//32
-        byte[] longPacket3 = new byte[514];
+        byte[] longPacket2 = new byte[514];
+        byte[] longPacket3 = new byte[1048];
         bytes.add(shortPacket);
         bytes.add(shortPacket2);
         bytes.add(midPacket);
         bytes.add(midPacket2);
         bytes.add(longPacket);
+        bytes.add(longPacket2);
         bytes.add(longPacket3);
         for(byte[]b:bytes){
             for(int i = 0;i<TESTSIZE;i++){

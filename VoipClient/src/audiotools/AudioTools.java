@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package audiotools;
 
 import audiotools.AudioPlayer.AudioPreset;
@@ -10,8 +5,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 /**
- *
- * @author scamp
+ * Tweaked version of AudioLib to allow audio presets;
  */
 public class AudioTools {
 
@@ -27,7 +21,7 @@ public class AudioTools {
         AudioPlayer player = new AudioPlayer(AudioPreset.Standard);
 
         //Recording time in seconds
-        int recordTime = 10;
+        int recordTime = 30;
 
         //Capture audio data and add to voiceVector
         System.out.println("Recording Audio...");

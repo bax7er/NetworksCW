@@ -6,7 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * A class to provide abstraction between the GUI and sender/receiver threads
  * @author James Baxter
  */
 public class VOIPservice {

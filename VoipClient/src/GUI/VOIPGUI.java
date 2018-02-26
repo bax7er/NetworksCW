@@ -18,7 +18,6 @@ public class VOIPGUI extends javax.swing.JFrame {
     public VOIPGUI() {
         initComponents();
         
-        
     }
 
 

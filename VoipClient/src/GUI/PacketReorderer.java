@@ -3,7 +3,7 @@ package GUI;
 import java.util.LinkedList;
 
 /**
- *
+ * A class to reorder and output frame correctly
  * @author James Baxter
  */
 public class PacketReorderer implements Compensator {

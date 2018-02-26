@@ -3,7 +3,7 @@ package GUI;
 import java.nio.ByteBuffer;
 
 /**
- *
+ * An extension to frame, adding checksums and data recovery methods
  * @author James Baxter & Shaun Leeks
  */
 public class FrameCheck extends Frame {
@@ -118,7 +118,6 @@ public class FrameCheck extends Frame {
                 }
                 else{
                     valid[i]=false;
-                    System.out.println("FAILED CHUNK");
                 }
             }
         }
@@ -157,6 +156,19 @@ public class FrameCheck extends Frame {
         }
     }
     
+    public byte[] getQuater(int quarter){
+        int start = quarter * 128;
+        
+        byte[] data = new byte[128];
+        System.arraycopy(framedata, start, data, 0, 128);
+        return data;
+    }
+    
+    public void setQuater(int quarter, byte[] data){
+        int start = quarter * 128;
+        
+        System.arraycopy(data, 0, framedata, start, 128);
+    }
     public void halveQuarter(int quarterDest, FrameCheck frameSource, int quarterSource){
         byte dif = 2;
         int startSource = quarterSource * 128;

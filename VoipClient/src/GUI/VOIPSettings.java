@@ -18,6 +18,7 @@ public class VOIPSettings {
     int socket;
     boolean extraData;
     String hostname;
+    boolean redundantData = false;
     
     void generateDefault(){
         switch(socket){

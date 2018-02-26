@@ -1,9 +1,5 @@
 package audiotools;
 
-/**
- *
- * @author scamp
- */
 import audiotools.AudioPlayer.AudioPreset;
 import java.io.ByteArrayInputStream;
 import java.io.File;

@@ -13,7 +13,7 @@ import uk.ac.uea.cmp.voip.*;
 
 /**
  *
- * @author James Baxter & Shaun Leek
+ * @author James Baxter & Shaun Leeks
  */
 class ReceiverThread implements Runnable {
 
@@ -40,6 +40,7 @@ class ReceiverThread implements Runnable {
     int reorderDelay;
     boolean repeat;
     boolean addNextFrameData = false;
+    boolean redundantData;
 
     @Deprecated
     public ReceiverThread(SocketType s, int port, AudioPreset a) {
@@ -65,6 +66,10 @@ class ReceiverThread implements Runnable {
         reorderPackets = settings.reorderPacket;
         reorderDelay = settings.bufferSize;
         repeat = settings.repeatLastGoodPacket;
+        redundantData = settings.redundantData;
+        if(redundantData){
+            packetSize *=2;
+        }
     }
 
     public void start() {
@@ -122,9 +127,11 @@ class ReceiverThread implements Runnable {
         PacketReorderer reorder = new PacketReorderer();
         PacketFixer fixer = new PacketFixer();
         fixer.repeat = repeat;
+        fixer.useRedundant = redundantData;
         reorder.repeat = repeat;
         reorder.initialDelay = reorderDelay;
         reorder.extraData = addNextFrameData;
+        
         while (running) {
             try {
                 byte[] buffer = new byte[packetSize];
@@ -135,11 +142,17 @@ class ReceiverThread implements Runnable {
                 Frame temp;
                 if (checkedFrames) {
                     //COMPENSATE FOR FRAME CORRUPTION HERE
+                    if(redundantData){
+                        fixer.pushRedundant(buffer);
+                        temp = fixer.popRedundant();
+                    }
+                    else{
                     FrameCheck fc = new FrameCheck(buffer);
                     fixer.push(new FrameCheck(buffer));
                     temp = fixer.pop()[0];
+                    }
                 }
-                if (addNextFrameData) {
+                else if (addNextFrameData) {
                     temp = new ADVFrame(buffer);
                 } else {
                     temp = new Frame(buffer);

@@ -2,7 +2,7 @@ package GUI;
 
 
 /**
- * Packet interleaver Version 2
+ * Packet interleaver building upon the initial block interleaver implementation
  * @author James Baxter & Shaun Leeks
  */
 public class Interleaver implements Compensator {

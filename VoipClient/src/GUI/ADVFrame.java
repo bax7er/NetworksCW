@@ -1,15 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package GUI;
 
 import java.nio.ByteBuffer;
 
 /**
- *
- * @author xwd14rfu
+ * A class to contain a frame of audio, and a compressed secondary frame
+ * @author James Baxter
  */
 public class ADVFrame extends Frame {
 

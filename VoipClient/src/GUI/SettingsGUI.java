@@ -11,21 +11,25 @@ public class SettingsGUI extends javax.swing.JFrame {
      */
     VOIPSettings settings;
     VOIPGUI parent;
+
     public SettingsGUI(VOIPSettings settings, VOIPGUI parent) {
         initComponents();
         this.settings = settings;
         this.parent = parent;
-        
+
         interleave.setSelected(settings.interleave);
         extraData.setSelected(settings.extraData);
         blockDepth.getModel().setValue(settings.interleaverSize);
         checkSum.setSelected(settings.checksumPacket);
         reorder.setSelected(settings.reorderPacket);
         bufferSize.getModel().setValue(settings.bufferSize);
-        if(settings.repeatLastGoodPacket)
-        correctiontech.setSelectedIndex(0);
-        else
-          correctiontech.setSelectedIndex(1);  
+        redundantData.setSelected(settings.redundantData);
+        if (settings.repeatLastGoodPacket) {
+            correctiontech.setSelectedIndex(0);
+        } else {
+            correctiontech.setSelectedIndex(1);
+        }
+        calculateDelay();  
     }
 
     /**
@@ -54,6 +58,10 @@ public class SettingsGUI extends javax.swing.JFrame {
         checkSum = new javax.swing.JCheckBox();
         jLabel9 = new javax.swing.JLabel();
         extraData = new javax.swing.JCheckBox();
+        delayNum = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        redundantData = new javax.swing.JCheckBox();
         bottomPanel = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         topPanel = new javax.swing.JPanel();
@@ -87,15 +95,32 @@ public class SettingsGUI extends javax.swing.JFrame {
         jLabel6.setForeground(new java.awt.Color(255, 255, 255));
         jLabel6.setText("Generate checksum packets");
 
+        reorder.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reorderActionPerformed(evt);
+            }
+        });
+
         jLabel7.setFont(new java.awt.Font("Segoe UI Light", 1, 18)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(255, 255, 255));
         jLabel7.setText("Reorder packets");
 
         bufferSize.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         bufferSize.setModel(new javax.swing.SpinnerNumberModel(2, 2, null, 1));
+        bufferSize.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                bufferSizeMouseClicked(evt);
+            }
+        });
 
         correctiontech.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         correctiontech.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Repeat", "Fill (blank audio)" }));
+
+        interleave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                interleaveActionPerformed(evt);
+            }
+        });
 
         jLabel8.setFont(new java.awt.Font("Segoe UI Light", 1, 18)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(255, 255, 255));
@@ -103,83 +128,150 @@ public class SettingsGUI extends javax.swing.JFrame {
 
         blockDepth.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
         blockDepth.setModel(new javax.swing.SpinnerNumberModel(2, 2, null, 1));
+        blockDepth.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                blockDepthMouseClicked(evt);
+            }
+        });
+
+        checkSum.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkSumActionPerformed(evt);
+            }
+        });
 
         jLabel9.setFont(new java.awt.Font("Segoe UI Light", 1, 18)); // NOI18N
         jLabel9.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel9.setText("Add compressed next frame");
+        jLabel9.setText("Add compressed next frame (not compatible with checksum)");
+
+        extraData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                extraDataActionPerformed(evt);
+            }
+        });
+
+        delayNum.setFont(new java.awt.Font("Segoe UI Light", 1, 18)); // NOI18N
+        delayNum.setForeground(new java.awt.Color(255, 255, 255));
+        delayNum.setText("32ms");
+
+        jLabel11.setFont(new java.awt.Font("Segoe UI Light", 1, 18)); // NOI18N
+        jLabel11.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel11.setText("Estimated Delay:");
+
+        jLabel10.setFont(new java.awt.Font("Segoe UI Light", 1, 18)); // NOI18N
+        jLabel10.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel10.setText("Add redundant data");
+
+        redundantData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                redundantDataActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout bodyPanelLayout = new javax.swing.GroupLayout(bodyPanel);
         bodyPanel.setLayout(bodyPanelLayout);
         bodyPanelLayout.setHorizontalGroup(
             bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bodyPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(bodyPanelLayout.createSequentialGroup()
+                        .addContainerGap()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(interleave)
-                        .addGap(36, 36, 36)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel8)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(36, 36, 36)
                         .addComponent(blockDepth, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel2)
+                    .addComponent(jLabel2))
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(bodyPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
                     .addGroup(bodyPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(correctiontech, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(bodyPanelLayout.createSequentialGroup()
                         .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(18, 18, 18)
                         .addComponent(checkSum))
                     .addGroup(bodyPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel7)
-                        .addGap(6, 6, 6)
-                        .addComponent(reorder)
-                        .addGap(48, 48, 48)
-                        .addComponent(jLabel4)
+                        .addComponent(jLabel9)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(extraData))
+                    .addGroup(bodyPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel10)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(redundantData))
+                    .addGroup(bodyPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(reorder)
+                        .addGap(61, 61, 61)
+                        .addComponent(jLabel4)
+                        .addGap(18, 18, 18)
                         .addComponent(bufferSize, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(bodyPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel9)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(extraData)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jLabel5)
+                        .addGap(18, 18, 18)
+                        .addComponent(correctiontech, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(bodyPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel11)
+                        .addGap(18, 18, 18)
+                        .addComponent(delayNum)))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
         bodyPanelLayout.setVerticalGroup(
             bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bodyPanelLayout.createSequentialGroup()
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(blockDepth, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                    .addComponent(interleave, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addGap(18, 18, 18)
-                .addGroup(bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel6)
-                    .addComponent(checkSum))
-                .addGap(9, 9, 9)
-                .addGroup(bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel9)
-                    .addComponent(extraData))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel3)
-                .addGap(7, 7, 7)
-                .addGroup(bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(bufferSize, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                    .addComponent(reorder, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(25, 25, 25)
+                    .addGroup(bodyPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(reorder)
+                        .addGap(39, 39, 39))
+                    .addGroup(bodyPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(blockDepth)
+                                .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(bodyPanelLayout.createSequentialGroup()
+                                    .addGap(0, 0, Short.MAX_VALUE)
+                                    .addComponent(jLabel1)))
+                            .addGroup(bodyPanelLayout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(interleave)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel6)
+                            .addComponent(checkSum))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel9)
+                            .addComponent(extraData))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel10)
+                            .addComponent(redundantData))
+                        .addGap(29, 29, 29)
+                        .addComponent(jLabel3)
+                        .addGroup(bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(bodyPanelLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel7))
+                            .addGroup(bodyPanelLayout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addGroup(bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel4)
+                                    .addComponent(bufferSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(34, 34, 34)))
                 .addGroup(bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(correctiontech, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(71, 71, 71))
+                .addGap(36, 36, 36)
+                .addGroup(bodyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel11)
+                    .addComponent(delayNum))
+                .addGap(225, 225, 225))
         );
 
         bottomPanel.setBackground(new java.awt.Color(42, 128, 185));
@@ -208,16 +300,16 @@ public class SettingsGUI extends javax.swing.JFrame {
             .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(bottomPanelLayout.createSequentialGroup()
                     .addGap(190, 190, 190)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE)
                     .addGap(190, 190, 190)))
         );
         bottomPanelLayout.setVerticalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 123, Short.MAX_VALUE)
+            .addGap(0, 117, Short.MAX_VALUE)
             .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(bottomPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -232,41 +324,37 @@ public class SettingsGUI extends javax.swing.JFrame {
         topPanelLayout.setHorizontalGroup(
             topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(topPanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(callerName, javax.swing.GroupLayout.PREFERRED_SIZE, 488, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 2, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         topPanelLayout.setVerticalGroup(
             topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(callerName, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
+            .addGroup(topPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(callerName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(32, 32, 32))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 490, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(topPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(bottomPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(bodyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGap(0, 0, Short.MAX_VALUE)))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(bottomPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(bodyPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(topPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 611, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(topPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(358, 358, 358)
-                            .addComponent(bottomPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(bodyPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGap(0, 0, Short.MAX_VALUE)))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(topPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(bodyPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(bottomPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -278,21 +366,49 @@ public class SettingsGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1MouseClicked
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-       settings.interleave = interleave.isSelected();
-       settings.interleaverSize = (Integer)blockDepth.getValue();
-       settings.checksumPacket=checkSum.isSelected();
-       settings.reorderPacket=reorder.isSelected();
-       settings.bufferSize = (Integer)bufferSize.getValue();
-       settings.extraData = extraData.isSelected();
-       if(correctiontech.getSelectedIndex()==0){
-           settings.repeatLastGoodPacket=true;
-       }
-       else{
-           settings.repeatLastGoodPacket=false;
-       }
-       parent.setVisible(true);
-       this.dispose();
+        settings.interleave = interleave.isSelected();
+        settings.interleaverSize = (Integer) blockDepth.getValue();
+        settings.checksumPacket = checkSum.isSelected();
+        settings.reorderPacket = reorder.isSelected();
+        settings.bufferSize = (Integer) bufferSize.getValue();
+        settings.extraData = extraData.isSelected();
+        if (correctiontech.getSelectedIndex() == 0) {
+            settings.repeatLastGoodPacket = true;
+        } else {
+            settings.repeatLastGoodPacket = false;
+        }
+        parent.setVisible(true);
+        settings.redundantData = redundantData.isSelected();
+        this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void interleaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_interleaveActionPerformed
+        calculateDelay();
+    }//GEN-LAST:event_interleaveActionPerformed
+
+    private void blockDepthMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_blockDepthMouseClicked
+        calculateDelay();
+    }//GEN-LAST:event_blockDepthMouseClicked
+
+    private void checkSumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkSumActionPerformed
+        calculateDelay();
+    }//GEN-LAST:event_checkSumActionPerformed
+
+    private void extraDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_extraDataActionPerformed
+        calculateDelay();
+    }//GEN-LAST:event_extraDataActionPerformed
+
+    private void reorderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reorderActionPerformed
+        calculateDelay();
+    }//GEN-LAST:event_reorderActionPerformed
+
+    private void bufferSizeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bufferSizeMouseClicked
+        calculateDelay();
+    }//GEN-LAST:event_bufferSizeMouseClicked
+
+    private void redundantDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_redundantDataActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_redundantDataActionPerformed
 
     /**
      * @param args the command line arguments
@@ -324,11 +440,35 @@ public class SettingsGUI extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new SettingsGUI(null,null).setVisible(true);
+                new SettingsGUI(null, null).setVisible(true);
             }
         });
     }
 
+    public void calculateDelay() {
+        int delay = 0;
+        if (interleave.isSelected()) {
+            int i = (Integer) blockDepth.getValue();
+            delay += (i * i);
+        }
+        if (extraData.isSelected()) {
+            delay++;
+        }
+        if (reorder.isSelected()) {
+            int i = (Integer) bufferSize.getValue();
+            delay += (i);
+        }
+        int frameLength = 32;
+        if (settings.bitrate == 1) {
+            frameLength = 32;
+        }
+        if (settings.bitrate == 2) {
+            frameLength = 16;
+
+        }
+        delay *= frameLength;
+        delayNum.setText(delay + "ms");
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSpinner blockDepth;
     private javax.swing.JPanel bodyPanel;
@@ -337,10 +477,13 @@ public class SettingsGUI extends javax.swing.JFrame {
     private javax.swing.JLabel callerName;
     private javax.swing.JCheckBox checkSum;
     private javax.swing.JComboBox<String> correctiontech;
+    private javax.swing.JLabel delayNum;
     private javax.swing.JCheckBox extraData;
     private javax.swing.JCheckBox interleave;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -349,6 +492,7 @@ public class SettingsGUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JCheckBox redundantData;
     private javax.swing.JCheckBox reorder;
     private javax.swing.JPanel topPanel;
     // End of variables declaration//GEN-END:variables

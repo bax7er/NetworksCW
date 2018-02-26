@@ -1,15 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package GUI;
 
 import java.nio.ByteBuffer;
 
 /**
- *
- * @author Baxter
+ * A class to hold audio data and related information
+ * @author James Baxter & Shaun Leeks
  */
 public class Frame implements Comparable<Frame>{
     public short frameNO;

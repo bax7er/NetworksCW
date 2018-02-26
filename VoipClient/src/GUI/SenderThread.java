@@ -34,6 +34,7 @@ class SenderThread implements Runnable{
     private Compensator comp;
     boolean generateChecksums = false;
     boolean addNextFrameData;
+    boolean redundantData;
     public void start(){
         this.thread = new Thread(this);
 	thread.start();
@@ -64,6 +65,7 @@ class SenderThread implements Runnable{
         if(settings.checksumPacket){
             generateChecksums = true;
         }
+        redundantData = settings.redundantData;
     }
     
     public void setUpConnection(){
@@ -135,6 +137,15 @@ class SenderThread implements Runnable{
                 count++;
                 if(comp ==null ){
                   DatagramPacket packet = new DatagramPacket(f.toByteArray(), f.toByteArray().length, clientIP, PORT);
+                  sentCount++;
+                  sending_socket.send(packet);
+                }
+                else if(redundantData){
+                    byte[]data = f.toByteArray();
+                    byte[] doubleData = new byte[data.length*2];
+                   System.arraycopy(data,0,doubleData,0,data.length);
+                   System.arraycopy(data,0,doubleData,data.length,data.length);
+                   DatagramPacket packet = new DatagramPacket(doubleData,doubleData.length, clientIP, PORT);
                   sentCount++;
                   sending_socket.send(packet);
                 }
